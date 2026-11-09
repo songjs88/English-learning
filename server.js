@@ -1,7 +1,9 @@
-// Zero-dependency static server for Render / Production
+// Zero-dependency production server for Render
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = __dirname;
@@ -18,11 +20,56 @@ const MIME_TYPES = {
   '.gif': 'image/gif',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
-  '.woff': 'font/woff'
+  '.woff': 'font/woff',
+  '.mp3': 'audio/mpeg'
 };
 
 const server = http.createServer((req, res) => {
-  let reqPath = decodeURI(req.url.split('?')[0]);
+  const parsedUrl = url.parse(req.url, true);
+  let reqPath = decodeURI(parsedUrl.pathname);
+
+  // 1. First-party TTS Audio Proxy (/api/tts?q=...)
+  // Streams clean native English MP3 audio without referer restrictions
+  if (reqPath === '/api/tts') {
+    const textQuery = (parsedUrl.query.q || '').slice(0, 200).trim();
+    if (!textQuery) {
+      res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Missing text query');
+      return;
+    }
+
+    const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(textQuery)}`;
+    const ttsReq = https.get(
+      ttsUrl,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      },
+      (ttsRes) => {
+        if (ttsRes.statusCode === 200) {
+          res.writeHead(200, {
+            'Content-Type': 'audio/mpeg',
+            'Cache-Control': 'public, max-age=86400, immutable',
+            'Access-Control-Allow-Origin': '*'
+          });
+          ttsRes.pipe(res);
+        } else {
+          res.writeHead(ttsRes.statusCode, { 'Content-Type': 'text/plain' });
+          res.end('TTS Upstream Error');
+        }
+      }
+    );
+
+    ttsReq.on('error', (err) => {
+      console.error('TTS proxy error:', err);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('TTS Proxy Error');
+    });
+    return;
+  }
+
+  // 2. Static File Serving
   if (reqPath === '/' || reqPath === '') {
     reqPath = '/index.html';
   }
@@ -32,14 +79,12 @@ const server = http.createServer((req, res) => {
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      // Fallback to index.html for SPA/PWA routing
       filePath = path.join(PUBLIC_DIR, 'index.html');
     }
 
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    // Set cache headers
     let cacheControl = 'public, max-age=3600';
     if (ext === '.html') {
       cacheControl = 'no-cache';

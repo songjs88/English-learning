@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="제니영어수다" />
   <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="referrer" content="no-referrer" />
   
   <title>☕ 옆집 제니와 5분 영어 수다 | Jenny's 5-Min English Cafe</title>
   
@@ -250,73 +251,74 @@
       </div>
     </header>
 
-    <!-- ==================== 2. 4-STEP SCENARIO TABS & PATTERN CARD ==================== -->
-    <section class="bg-cream-100/70 border-b border-cream-200 px-3 pt-2 pb-2 shrink-0 z-10">
-      <!-- 4 Scenario Tabs -->
-      <div class="grid grid-cols-4 gap-1.5 mb-2" id="scenarioTabs">
-        <!-- Rendered dynamically by JS -->
-      </div>
-
-      <!-- Today's Key Pattern Card (Collapsible for Maximum Screen Space) -->
-      <div class="bg-white rounded-2xl p-2.5 sm:p-3 border-2 border-coral-200 shadow-sm relative overflow-hidden transition-all duration-300">
-        <!-- Top Row: Badge & Collapsible Toggle -->
-        <div class="flex items-center justify-between gap-1 mb-1">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <span id="scenarioBadge" class="text-[11px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full bg-coral-500 text-white truncate max-w-[200px] sm:max-w-none">
-              Step 2 · 오늘 저녁 메뉴 고민
-            </span>
-            <span class="text-[11px] font-bold text-cocoa-600 hidden sm:inline">오늘 이 표현 딱 1개만 써봐요!</span>
-          </div>
-          <button onclick="togglePatternCollapse()" id="patternCollapseBtn" class="shrink-0 text-[11px] font-extrabold text-cocoa-700 bg-cream-100 hover:bg-cream-200 active:scale-95 px-2 py-0.5 rounded-lg border border-cream-300 transition flex items-center gap-0.5">
-            <span>접기</span>
-            <span>▲</span>
-          </button>
+    <!-- ==================== 2. CHAT & SCENARIO CONVERSATION WINDOW ==================== -->
+    <main id="chatContainer" class="flex-1 min-h-0 overflow-y-auto px-3 sm:px-4 py-3 space-y-3.5 overscroll-contain" style="-webkit-overflow-scrolling: touch; touch-action: pan-y;">
+      
+      <!-- 4-STEP SCENARIO TABS & PATTERN CARD (Naturally scrollable with the chat) -->
+      <section class="bg-cream-100/90 rounded-3xl p-2.5 sm:p-3 border-2 border-cream-200 shadow-sm space-y-2">
+        <!-- 4 Scenario Tabs -->
+        <div class="grid grid-cols-4 gap-1.5" id="scenarioTabs">
+          <!-- Rendered dynamically by JS -->
         </div>
 
-        <!-- Pattern Main Expression + Pronunciation Audio Button -->
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex-1 min-w-0">
-            <div class="flex flex-wrap items-baseline gap-x-2">
-              <p id="patternEn" class="font-en text-base sm:text-2xl font-black text-coral-600 tracking-tight truncate">
-                I'm thinking of ~
-              </p>
-              <p id="patternMeaning" class="text-xs sm:text-base font-bold text-cocoa-800">
-                (나 ~할까 생각 중이야)
-              </p>
+        <!-- Today's Key Pattern Card -->
+        <div class="bg-white rounded-2xl p-2.5 sm:p-3 border-2 border-coral-200 shadow-sm relative overflow-hidden transition-all duration-300">
+          <!-- Top Row: Badge & Collapsible Toggle -->
+          <div class="flex items-center justify-between gap-1 mb-1">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span id="scenarioBadge" class="text-[11px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full bg-coral-500 text-white truncate max-w-[200px] sm:max-w-none">
+                Step 2 · 오늘 저녁 메뉴 고민
+              </span>
+              <span class="text-[11px] font-bold text-cocoa-600 hidden sm:inline">오늘 이 표현 딱 1개만 써봐요!</span>
             </div>
-          </div>
-
-          <!-- Listen Pattern Button -->
-          <button onclick="speakCurrentPattern()" class="shrink-0 flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 rounded-xl px-2.5 py-1.5 transition shadow-sm" title="원어민 발음 듣기">
-            <i class="ph-fill ph-speaker-high text-lg"></i>
-            <span class="text-xs font-black">발음 듣기</span>
-          </button>
-        </div>
-
-        <!-- Collapsible Details: Korean Pronunciation + 3-Turn Progress Bar -->
-        <div id="patternCollapsibleDetails" class="mt-2 space-y-2 border-t border-cream-200 pt-2 transition-all">
-          <p id="patternPron" class="text-xs sm:text-sm font-bold text-sage-700 bg-sage-50 inline-block px-2.5 py-1 rounded-lg border border-sage-200">
-            🗣️ 발음: [ 아임 띵킹 오브 ~ ]
-          </p>
-
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-1.5 flex-1 min-w-0">
-              <span class="text-[11px] font-extrabold text-cocoa-700 shrink-0">오늘의 미션</span>
-              <div class="flex-1 h-2 bg-cream-200 rounded-full overflow-hidden p-0.5">
-                <div id="turnProgressBar" class="h-full bg-gradient-to-r from-coral-400 to-coral-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-              </div>
-              <span id="turnCountText" class="text-[11px] font-black text-coral-600 shrink-0">0 / 3마디</span>
-            </div>
-            <button onclick="openFinishModal()" class="text-[11px] font-extrabold text-sage-700 bg-sage-100 hover:bg-sage-200 px-2 py-0.5 rounded-lg transition shrink-0">
-              🌺 완료 도장
+            <button onclick="togglePatternCollapse()" id="patternCollapseBtn" class="shrink-0 text-[11px] font-extrabold text-cocoa-700 bg-cream-100 hover:bg-cream-200 active:scale-95 px-2 py-0.5 rounded-lg border border-cream-300 transition flex items-center gap-0.5">
+              <span>접기</span>
+              <span>▲</span>
             </button>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ==================== 3. CHAT CONVERSATION WINDOW ==================== -->
-    <main id="chatContainer" class="flex-1 min-h-0 overflow-y-auto px-3.5 sm:px-4 py-3 space-y-4 overscroll-contain" style="-webkit-overflow-scrolling: touch; touch-action: pan-y;">
+          <!-- Pattern Main Expression + Pronunciation Audio Button -->
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-baseline gap-x-2">
+                <p id="patternEn" class="font-en text-base sm:text-2xl font-black text-coral-600 tracking-tight truncate">
+                  I'm thinking of ~
+                </p>
+                <p id="patternMeaning" class="text-xs sm:text-base font-bold text-cocoa-800">
+                  (나 ~할까 생각 중이야)
+                </p>
+              </div>
+            </div>
+
+            <!-- Listen Pattern Button -->
+            <button onclick="speakCurrentPattern()" class="shrink-0 flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 rounded-xl px-2.5 py-1.5 transition shadow-sm" title="원어민 발음 듣기">
+              <i class="ph-fill ph-speaker-high text-lg"></i>
+              <span class="text-xs font-black">발음 듣기</span>
+            </button>
+          </div>
+
+          <!-- Collapsible Details: Korean Pronunciation + 3-Turn Progress Bar -->
+          <div id="patternCollapsibleDetails" class="mt-2 space-y-2 border-t border-cream-200 pt-2 transition-all">
+            <p id="patternPron" class="text-xs sm:text-sm font-bold text-sage-700 bg-sage-50 inline-block px-2.5 py-1 rounded-lg border border-sage-200">
+              🗣️ 발음: [ 아임 띵킹 오브 ~ ]
+            </p>
+
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                <span class="text-[11px] font-extrabold text-cocoa-700 shrink-0">오늘의 미션</span>
+                <div class="flex-1 h-2 bg-cream-200 rounded-full overflow-hidden p-0.5">
+                  <div id="turnProgressBar" class="h-full bg-gradient-to-r from-coral-400 to-coral-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <span id="turnCountText" class="text-[11px] font-black text-coral-600 shrink-0">0 / 3마디</span>
+              </div>
+              <button onclick="openFinishModal()" class="text-[11px] font-extrabold text-sage-700 bg-sage-100 hover:bg-sage-200 px-2 py-0.5 rounded-lg transition shrink-0">
+                🌺 완료 도장
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Tip Banner for Konglish -->
       <div class="bg-honey-50 border border-honey-300 rounded-2xl p-3 text-center shadow-sm">
         <p class="text-sm sm:text-base font-bold text-cocoa-800">
@@ -1837,8 +1839,14 @@ ${recentHistory}
         }
 
         const encoded = encodeURIComponent(cleanText);
-        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encoded}`;
+        // Use first-party /api/tts proxy when hosted on Render / Node server, which avoids third-party Referer blocks completely!
+        const isHostedOnServer = window.location.protocol.startsWith('http');
+        const audioUrl = isHostedOnServer
+          ? `/api/tts?q=${encoded}`
+          : `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encoded}`;
+
         currentFallbackAudio = new Audio(audioUrl);
+        currentFallbackAudio.referrerPolicy = "no-referrer";
         currentFallbackAudio.playbackRate = customRate || speechSpeed || 0.82;
 
         currentFallbackAudio.onended = () => {
@@ -1849,16 +1857,31 @@ ${recentHistory}
         };
 
         currentFallbackAudio.onerror = () => {
-          if (indicator) {
-            indicator.classList.add("hidden");
-            indicator.classList.remove("inline-flex");
+          // If first try failed, try direct Google TTS with no-referrer
+          if (audioUrl.startsWith('/api/tts')) {
+            const directUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encoded}`;
+            currentFallbackAudio = new Audio(directUrl);
+            currentFallbackAudio.referrerPolicy = "no-referrer";
+            currentFallbackAudio.playbackRate = customRate || speechSpeed || 0.82;
+            currentFallbackAudio.play().catch(() => {});
+            currentFallbackAudio.onended = () => {
+              if (indicator) {
+                indicator.classList.add("hidden");
+                indicator.classList.remove("inline-flex");
+              }
+            };
+          } else {
+            if (indicator) {
+              indicator.classList.add("hidden");
+              indicator.classList.remove("inline-flex");
+            }
           }
         };
 
         const playPromise = currentFallbackAudio.play();
         if (playPromise !== undefined) {
           playPromise.catch((err) => {
-            console.warn("Audio fallback playback blocked:", err);
+            console.warn("Audio playback blocked, trying fallback:", err);
             if (indicator) {
               indicator.classList.add("hidden");
               indicator.classList.remove("inline-flex");
@@ -1877,6 +1900,14 @@ ${recentHistory}
 
       const rate = customRate || speechSpeed || 0.82;
       const indicator = document.getElementById("speakingIndicator");
+
+      // In KakaoTalk, Naver, Instagram in-app browsers, SpeechSynthesis is notoriously crippled or silent on Android.
+      // Use high-performance Cloud Audio directly in in-app browsers for 100% sound reliability!
+      const isInAppBrowser = /KAKAOTALK|NAVER|Instagram|FB_IAB|Line/i.test(navigator.userAgent);
+      if (isInAppBrowser) {
+        playAudioFallback(cleanText, rate);
+        return;
+      }
 
       // Check if Web Speech API is natively available
       const hasSpeechSynth = typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis;
