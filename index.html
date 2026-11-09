@@ -521,11 +521,23 @@
 
     // --- Initialization ---
     window.onload = function() {
-      // Audio unlock on first touch for KakaoTalk & Mobile Safari
+      // Auto redirect out of KakaoTalk in-app browser to real Chrome/Safari for audio/mic support
+      const ua = navigator.userAgent.toLowerCase();
+      if (ua.includes('kakao') || ua.includes('kakaotalk')) {
+        const currentUrl = window.location.href;
+        if (ua.includes('android')) {
+          window.location.href = 'intent://' + currentUrl.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end;';
+        } else {
+          // iOS KakaoTalk forces external browser if opened via specific schema or user clicks button
+          document.getElementById('kakaoBrowserBanner').classList.remove('hidden');
+          document.getElementById('kakaoBrowserBanner').classList.add('flex');
+        }
+      }
+
+      // Audio unlock on first touch for mobile Safari & Chrome
       document.body.addEventListener('click', unlockAudioOnce, { once: true });
       document.body.addEventListener('touchstart', unlockAudioOnce, { once: true });
 
-      checkKakaoTalkBrowser();
       renderScenarioTabs();
       renderScenarioDetails();
       renderChatMessages();
