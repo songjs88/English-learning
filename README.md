@@ -5,6 +5,38 @@
 
 ---
 
+## 🚀 GitHub + Render (onrender.com) 배포 방법 (가장 추천)
+
+GitHub에 코드를 올린 후 **Render**에 연동하면, 접속자가 별도로 가입하거나 로그인할 필요 없이 **누구나 스마트폰과 PC에서 바로 사용할 수 있는 무료 HTTPS 주소**가 생성됩니다.
+
+### 1단계: GitHub에 저장소 만들고 코드 올리기
+1. [GitHub](https://github.com)에 로그인 후 우측 상단 `+` 버튼 → **New repository**를 클릭합니다.
+2. Repository name에 `jenny-english-cafe` (또는 원하는 이름)를 입력하고 **Create repository**를 누릅니다.
+3. 터미널(VS Code 터미널 또는 PowerShell)에서 아래 명령어를 복사하여 실행합니다:
+   ```bash
+   git remote add origin https://github.com/<본인_깃허브_아이디>/jenny-english-cafe.git
+   git push -u origin main
+   ```
+
+---
+
+### 2단계: Render (onrender.com)에서 원클릭 배포
+1. [Render 대시보드 (dashboard.render.com)](https://dashboard.render.com)에 로그인합니다.
+2. 우측 상단 **[New +]** 버튼 클릭 → **[Static Site]** 선택  
+   *(또는 Web Service를 선택하셔도 내장 `server.js`로 자동 배포됩니다)*
+3. GitHub 계정 연결 후 방금 올린 `jenny-english-cafe` 저장소 옆의 **[Connect]** 클릭
+4. 배포 정보 확인:
+   * **Name**: `jenny-english-cafe` (자유롭게 입력, 예: `jenny-english`)
+   * **Branch**: `main`
+   * **Build Command**: 비워둠 (또는 `npm run build`)
+   * **Publish Directory**: `.` (점 하나 입력)
+5. 맨 아래 **[Create Static Site]** 클릭!
+6. 약 1분 후 `https://jenny-english-cafe.onrender.com` 형태의 **전용 주소**가 생성됩니다!
+   * 친구, 가족, 수강생 등 **누구나 가입 없이 바로 클릭해서 사용**할 수 있습니다.
+   * 스마트폰 브라우저에서 열고 **[홈 화면에 추가]**를 누르면 앱처럼 바탕화면에 설치됩니다.
+
+---
+
 ## 🌟 주요 기능
 
 1. **🇰🇷 + 🇺🇸 반반 영어 지원 & 폭풍 칭찬 피드백**
@@ -26,51 +58,8 @@
 
 ---
 
-## 🚀 1분 만에 웹 배포하는 방법 (무료 HTTPS)
-
-이 앱은 순수 웹 표준(HTML5 + Vanilla JS + CSS)으로 제작되어 **어떤 무료 웹 호스팅에서도 즉시 1분 만에 배포**할 수 있습니다.
-
-### 방법 1: Netlify 드롭 배포 (가장 추천 · 코딩/CLI 불필요)
-1. [Netlify Drop](https://app.netlify.com/drop)에 접속하여 무료 회원가입/로그인합니다.
-2. 이 프로젝트 폴더(`English learning app`) 전체를 브라우저 화면의 점선 상자 안으로 **마우스로 끌어다 놓기(Drag & Drop)**만 하세요.
-3. 5초 만에 `https://random-name.netlify.app` 같은 **무료 HTTPS 주소**가 생성됩니다!
-4. 스마트폰으로 해당 주소에 접속하여 브라우저 메뉴의 **[홈 화면에 추가]**를 누르면 스마트폰 앱처럼 설치됩니다.
-
-### 방법 2: Vercel 배포
-터미널에서 아래 명령을 실행합니다:
-```bash
-npx vercel
-```
-안내에 따라 몇 가지 엔터만 치면 `https://xxx.vercel.app` 주소로 즉각 배포됩니다.
-
-### 방법 3: GitHub Pages 배포
-1. GitHub에서 새 저장소(Repository)를 만듭니다.
-2. 터미널에서 다음 명령어를 실행합니다:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial release of Jenny English Cafe"
-   git branch -M main
-   git remote add origin <사용자_깃허브_주소>
-   git push -u origin main
-   ```
-3. GitHub 저장소의 **Settings → Pages** 메뉴에서 Source를 `main` 브랜치의 `/ (root)`로 선택하고 저장하면 몇 분 후 무료 배포 주소가 활성화됩니다.
-
----
-
 ## 💻 로컬에서 바로 실행하기
 
 컴퓨터에서 바로 확인하고 싶다면:
-1. `index.html` 파일을 더블클릭하여 크롬(Chrome)이나 엣지(Edge) 브라우저로 엽니다.
-2. 또는 터미널에서 로컬 서버 실행:
-   ```bash
-   npx serve .
-   ```
-   브라우저에서 `http://localhost:3000`으로 접속합니다.
-
----
-
-## 📱 스마트폰 홈 화면 앱 설치 (PWA)
-- **갤럭시/안드로이드**: 크롬 또는 삼성 인터넷 접속 → 우측 상단 `⋮` 메뉴 → `[홈 화면에 추가]` 또는 `[앱 설치]`
-- **아이폰/iOS**: 사파리(Safari) 접속 → 하단 중앙 `공유(📤)` 버튼 → `[홈 화면에 추가]`
-
+* `index.html` 파일을 더블클릭하여 크롬(Chrome)이나 엣지(Edge) 브라우저로 엽니다.
+* 또는 터미널에서 `npm start`를 실행하면 `http://localhost:3000`에서 실행됩니다.
