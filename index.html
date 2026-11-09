@@ -158,15 +158,22 @@
     button, input {
       touch-action: manipulation;
     }
+    /* Mobile Touch & Scroll Fixes */
+    #chatContainer {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      touch-action: pan-y;
+      min-height: 0;
+    }
   </style>
 </head>
-<body class="min-h-screen flex justify-center items-start md:items-center md:py-4 select-none">
+<body class="min-h-screen flex justify-center items-start md:items-center md:py-4">
 
   <!-- Main App Container (Mobile/Tablet Friendly Frame) -->
-  <div class="w-full max-w-[540px] h-[100dvh] md:h-[94dvh] md:max-h-[920px] bg-cream-50 md:rounded-[32px] md:shadow-2xl md:border-4 md:border-white flex flex-col overflow-hidden relative">
+  <div class="w-full max-w-[540px] h-[100dvh] md:h-[94dvh] md:max-h-[920px] bg-cream-50 md:rounded-[32px] md:shadow-2xl md:border-4 md:border-white flex flex-col overflow-hidden relative" style="height: 100dvh; max-height: 100dvh;">
 
     <!-- ==================== 1. TOP HEADER & CONTROL BAR ==================== -->
-    <header class="bg-white/95 backdrop-blur-md border-b border-cream-200 px-3.5 safe-top pb-2.5 shrink-0 z-20 shadow-sm">
+    <header class="bg-white/95 backdrop-blur-md border-b border-cream-200 px-3.5 safe-top pb-2 shrink-0 z-20 shadow-sm">
       <!-- Top Row: Brand & Stamp / Notebook / Share / Settings Buttons -->
       <div class="flex items-center justify-between gap-1.5 mb-2">
         <div class="flex items-center gap-2 min-w-0">
@@ -193,21 +200,21 @@
 
         <!-- Right Action Buttons: Stamp, Review Note, Share & Settings -->
         <div class="flex items-center gap-1 shrink-0">
-          <button onclick="openFinishModal()" class="flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 px-2.5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="오늘의 여권 스탬프 & 영어 일기">
+          <button onclick="openFinishModal()" class="flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="오늘의 여권 스탬프 & 영어 일기">
             <span>🌺</span>
             <span id="headerStampCount">1/4</span>
           </button>
-          <button onclick="openNotebookModal()" class="relative flex items-center gap-1 bg-sage-50 hover:bg-sage-100 active:scale-95 text-sage-700 border border-sage-200 px-2.5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="내가 저장한 문장 복습노트">
+          <button onclick="openNotebookModal()" class="relative flex items-center gap-1 bg-sage-50 hover:bg-sage-100 active:scale-95 text-sage-700 border border-sage-200 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="내가 저장한 문장 복습노트">
             <span>📒</span>
             <span class="hidden sm:inline">복습</span>
             <span id="notebookBadge" class="bg-sage-600 text-white text-[11px] px-1.5 py-0.2 rounded-full font-extrabold">2</span>
           </button>
-          <button onclick="openShareModal()" class="flex items-center gap-1 bg-honey-100 hover:bg-honey-300/60 active:scale-95 text-cocoa-900 border border-honey-300 px-2.5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="친구에게 앱 공유 & 내 폰 설치">
+          <button onclick="openShareModal()" class="flex items-center gap-1 bg-honey-100 hover:bg-honey-300/60 active:scale-95 text-cocoa-900 border border-honey-300 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="친구에게 앱 공유 & 내 폰 설치">
             <i class="ph-bold ph-share-network text-coral-600 text-base"></i>
             <span class="hidden sm:inline">공유</span>
           </button>
-          <button onclick="openSettingsModal()" class="flex items-center justify-center bg-cream-100 hover:bg-cream-200 active:scale-95 text-cocoa-700 border border-cream-300 w-9 h-9 rounded-2xl font-extrabold text-sm transition shadow-sm" title="설정 (Gemini API 키 및 모드 설정)">
-            <i class="ph-bold ph-gear text-lg"></i>
+          <button onclick="openSettingsModal()" class="flex items-center justify-center bg-cream-100 hover:bg-cream-200 active:scale-95 text-cocoa-700 border border-cream-300 w-8 h-8 sm:w-9 sm:h-9 rounded-2xl font-extrabold text-sm transition shadow-sm" title="설정 (Gemini API 키 및 모드 설정)">
+            <i class="ph-bold ph-gear text-base sm:text-lg"></i>
           </button>
         </div>
       </div>
@@ -215,19 +222,19 @@
       <!-- Second Row: Speed Toggle & Hands-Free Mode Toggle & Mobile Install Shortcut -->
       <div class="flex items-center justify-between gap-1.5 bg-cream-100/90 p-1.5 rounded-2xl border border-cream-200">
         <!-- Speed Toggle -->
-        <button id="speedToggleBtn" onclick="toggleSpeechSpeed()" class="flex-1 flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-white text-cocoa-800 font-bold text-xs sm:text-sm shadow-sm border border-cream-200 active:scale-95 transition">
+        <button id="speedToggleBtn" onclick="toggleSpeechSpeed()" class="flex-1 flex items-center justify-center gap-1 py-1.5 sm:py-2 px-2 rounded-xl bg-white text-cocoa-800 font-bold text-xs sm:text-sm shadow-sm border border-cream-200 active:scale-95 transition">
           <span id="speedEmoji" class="text-sm sm:text-base">🐢</span>
           <span id="speedLabel" class="truncate">천천히 (0.8x)</span>
         </button>
 
         <!-- Hands-free Dishwashing Mode Toggle -->
-        <button id="handsFreeBtn" onclick="toggleHandsFree()" class="flex-1 flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-transparent text-cocoa-700 font-bold text-xs sm:text-sm hover:bg-white/60 active:scale-95 transition">
+        <button id="handsFreeBtn" onclick="toggleHandsFree()" class="flex-1 flex items-center justify-center gap-1 py-1.5 sm:py-2 px-2 rounded-xl bg-transparent text-cocoa-700 font-bold text-xs sm:text-sm hover:bg-white/60 active:scale-95 transition">
           <span class="text-sm sm:text-base">🧤</span>
           <span id="handsFreeLabel" class="truncate">설거지모드 OFF</span>
         </button>
 
         <!-- Mobile Home Screen Install Quick Button -->
-        <button onclick="openShareModal('install')" class="shrink-0 flex items-center justify-center gap-1 py-2 px-2.5 rounded-xl bg-coral-50 hover:bg-coral-100 text-coral-600 border border-coral-200 font-extrabold text-xs sm:text-sm active:scale-95 transition">
+        <button onclick="openShareModal('install')" class="shrink-0 flex items-center justify-center gap-1 py-1.5 sm:py-2 px-2.5 rounded-xl bg-coral-50 hover:bg-coral-100 text-coral-600 border border-coral-200 font-extrabold text-xs sm:text-sm active:scale-95 transition">
           <span>📱</span>
           <span>폰설치</span>
         </button>
@@ -237,67 +244,79 @@
       <div id="handsFreeBanner" class="hidden mt-2 bg-sage-600 text-white px-3.5 py-2 rounded-xl text-sm font-bold flex items-center justify-between animate-pop">
         <div class="flex items-center gap-2">
           <i class="ph-fill ph-speaker-high text-lg animate-bounce"></i>
-          <span>설거지 모드 켜짐: 제니 답변 후 추천 대답까지 자동으로 읽어드려요!</span>
+          <span>설거지 모드: 제니 답변 후 추천 대답까지 자동으로 읽어드려요!</span>
         </div>
         <button onclick="toggleHandsFree()" class="text-xs bg-white/20 px-2 py-1 rounded-lg hover:bg-white/30">끄기</button>
       </div>
     </header>
 
     <!-- ==================== 2. 4-STEP SCENARIO TABS & PATTERN CARD ==================== -->
-    <section class="bg-cream-100/70 border-b border-cream-200 px-3 pt-2.5 pb-2 shrink-0 z-10">
-      <!-- 4 Scenario Tabs (Horizontally scrollable on narrow screens, grid on wider) -->
+    <section class="bg-cream-100/70 border-b border-cream-200 px-3 pt-2 pb-2 shrink-0 z-10">
+      <!-- 4 Scenario Tabs -->
       <div class="grid grid-cols-4 gap-1.5 mb-2" id="scenarioTabs">
         <!-- Rendered dynamically by JS -->
       </div>
 
-      <!-- Today's Key Pattern Card + Turn Counter -->
-      <div class="bg-white rounded-2xl p-3 border-2 border-coral-200 shadow-sm relative overflow-hidden">
-        <div class="flex items-start justify-between gap-2">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span id="scenarioBadge" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-coral-500 text-white">
-                Step 2 · 오늘 저녁 메뉴 고민
-              </span>
-              <span class="text-xs font-bold text-cocoa-600">오늘 이 표현 딱 1개만 써봐요!</span>
-            </div>
-            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 mt-1">
-              <p id="patternEn" class="font-en text-xl sm:text-2xl font-black text-coral-600 tracking-tight">
-                I'm thinking of ~
-              </p>
-              <p id="patternMeaning" class="text-base font-bold text-cocoa-800">
-                (나 ~할까 생각 중이야)
-              </p>
-            </div>
-            <p id="patternPron" class="text-base font-bold text-sage-700 bg-sage-50 inline-block px-2.5 py-0.5 rounded-lg mt-1 border border-sage-200">
-              🗣️ 발음: [ 아임 띵킹 오브 ~ ]
-            </p>
+      <!-- Today's Key Pattern Card (Collapsible for Maximum Screen Space) -->
+      <div class="bg-white rounded-2xl p-2.5 sm:p-3 border-2 border-coral-200 shadow-sm relative overflow-hidden transition-all duration-300">
+        <!-- Top Row: Badge & Collapsible Toggle -->
+        <div class="flex items-center justify-between gap-1 mb-1">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span id="scenarioBadge" class="text-[11px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full bg-coral-500 text-white truncate max-w-[200px] sm:max-w-none">
+              Step 2 · 오늘 저녁 메뉴 고민
+            </span>
+            <span class="text-[11px] font-bold text-cocoa-600 hidden sm:inline">오늘 이 표현 딱 1개만 써봐요!</span>
           </div>
-
-          <!-- Listen Pattern Button -->
-          <button onclick="speakCurrentPattern()" class="shrink-0 flex flex-col items-center justify-center bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 rounded-2xl px-3 py-2 transition shadow-sm">
-            <i class="ph-fill ph-speaker-high text-2xl"></i>
-            <span class="text-xs font-extrabold mt-0.5">발음 듣기</span>
+          <button onclick="togglePatternCollapse()" id="patternCollapseBtn" class="shrink-0 text-[11px] font-extrabold text-cocoa-700 bg-cream-100 hover:bg-cream-200 active:scale-95 px-2 py-0.5 rounded-lg border border-cream-300 transition flex items-center gap-0.5">
+            <span>접기</span>
+            <span>▲</span>
           </button>
         </div>
 
-        <!-- 3-Turn Progress Bar -->
-        <div class="mt-2.5 pt-2 border-t border-cream-200 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2 flex-1">
-            <span class="text-xs font-extrabold text-cocoa-700 shrink-0">오늘의 수다 미션</span>
-            <div class="flex-1 h-2.5 bg-cream-200 rounded-full overflow-hidden p-0.5">
-              <div id="turnProgressBar" class="h-full bg-gradient-to-r from-coral-400 to-coral-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+        <!-- Pattern Main Expression + Pronunciation Audio Button -->
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-baseline gap-x-2">
+              <p id="patternEn" class="font-en text-base sm:text-2xl font-black text-coral-600 tracking-tight truncate">
+                I'm thinking of ~
+              </p>
+              <p id="patternMeaning" class="text-xs sm:text-base font-bold text-cocoa-800">
+                (나 ~할까 생각 중이야)
+              </p>
             </div>
-            <span id="turnCountText" class="text-xs font-black text-coral-600 shrink-0">0 / 3마디</span>
           </div>
-          <button onclick="openFinishModal()" class="text-xs font-extrabold text-sage-700 bg-sage-100 hover:bg-sage-200 px-2.5 py-1 rounded-lg transition shrink-0">
-            🌺 오늘 수다 완료하기
+
+          <!-- Listen Pattern Button -->
+          <button onclick="speakCurrentPattern()" class="shrink-0 flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 rounded-xl px-2.5 py-1.5 transition shadow-sm" title="원어민 발음 듣기">
+            <i class="ph-fill ph-speaker-high text-lg"></i>
+            <span class="text-xs font-black">발음 듣기</span>
           </button>
+        </div>
+
+        <!-- Collapsible Details: Korean Pronunciation + 3-Turn Progress Bar -->
+        <div id="patternCollapsibleDetails" class="mt-2 space-y-2 border-t border-cream-200 pt-2 transition-all">
+          <p id="patternPron" class="text-xs sm:text-sm font-bold text-sage-700 bg-sage-50 inline-block px-2.5 py-1 rounded-lg border border-sage-200">
+            🗣️ 발음: [ 아임 띵킹 오브 ~ ]
+          </p>
+
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+              <span class="text-[11px] font-extrabold text-cocoa-700 shrink-0">오늘의 미션</span>
+              <div class="flex-1 h-2 bg-cream-200 rounded-full overflow-hidden p-0.5">
+                <div id="turnProgressBar" class="h-full bg-gradient-to-r from-coral-400 to-coral-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+              <span id="turnCountText" class="text-[11px] font-black text-coral-600 shrink-0">0 / 3마디</span>
+            </div>
+            <button onclick="openFinishModal()" class="text-[11px] font-extrabold text-sage-700 bg-sage-100 hover:bg-sage-200 px-2 py-0.5 rounded-lg transition shrink-0">
+              🌺 완료 도장
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ==================== 3. CHAT CONVERSATION WINDOW ==================== -->
-    <main id="chatContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-5 scroll-smooth">
+    <main id="chatContainer" class="flex-1 min-h-0 overflow-y-auto px-3.5 sm:px-4 py-3 space-y-4 overscroll-contain" style="-webkit-overflow-scrolling: touch; touch-action: pan-y;">
       <!-- Tip Banner for Konglish -->
       <div class="bg-honey-50 border border-honey-300 rounded-2xl p-3 text-center shadow-sm">
         <p class="text-sm sm:text-base font-bold text-cocoa-800">
@@ -1030,12 +1049,51 @@
       updateAiStatusUI();
     };
 
-    // Unlock Web Audio Context on first tap
-    window.addEventListener("click", () => {
-      if ("speechSynthesis" in window && window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
+    // Collapsible Pattern Card State for Mobile
+    let isPatternCollapsed = false;
+
+    function togglePatternCollapse() {
+      isPatternCollapsed = !isPatternCollapsed;
+      const details = document.getElementById("patternCollapsibleDetails");
+      const btn = document.getElementById("patternCollapseBtn");
+      if (!details || !btn) return;
+
+      if (isPatternCollapsed) {
+        details.classList.add("hidden");
+        btn.innerHTML = '<span>펼치기</span><span>▼</span>';
+        btn.className = "shrink-0 text-[11px] font-black text-coral-600 bg-coral-50 hover:bg-coral-100 active:scale-95 px-2 py-0.5 rounded-lg border border-coral-200 transition flex items-center gap-0.5";
+      } else {
+        details.classList.remove("hidden");
+        btn.innerHTML = '<span>접기</span><span>▲</span>';
+        btn.className = "shrink-0 text-[11px] font-extrabold text-cocoa-700 bg-cream-100 hover:bg-cream-200 active:scale-95 px-2 py-0.5 rounded-lg border border-cream-300 transition flex items-center gap-0.5";
       }
-    }, { once: true });
+    }
+
+    // Unlock Web Audio & Speech Context on first user touch or click
+    const unlockAudioContext = () => {
+      try {
+        if ("speechSynthesis" in window && window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+        // Prime audio element for mobile iOS/Android
+        const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
+        silentAudio.play().catch(() => {});
+      } catch (e) {}
+    };
+    window.addEventListener("click", unlockAudioContext, { once: true });
+    window.addEventListener("touchstart", unlockAudioContext, { once: true });
+
+    // Focus handler for mobile virtual keyboard
+    window.addEventListener("DOMContentLoaded", () => {
+      const input = document.getElementById("userInput");
+      if (input) {
+        input.addEventListener("focus", () => {
+          setTimeout(() => {
+            scrollToBottom();
+          }, 320);
+        });
+      }
+    });
 
     // ==================== SETTINGS & AI ENGINE MODAL ====================
     function openSettingsModal() {
@@ -1759,79 +1817,172 @@ ${recentHistory}
       speakText(sc.patternEn.replace("~", ""));
     }
 
-    function speakText(text, customRate) {
-      if (!("speechSynthesis" in window)) {
-        showToast("🔊", "이 브라우저에서는 음성 재생을 지원하지 않아요.");
-        return;
-      }
+    let currentFallbackAudio = null;
 
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "en-US";
-      utter.rate = customRate || speechSpeed;
-      utter.pitch = 1.05; // Warm, friendly tone
+    // High-quality Cloud Audio TTS fallback (Works 100% in KakaoTalk, Safari, Chrome, WebViews)
+    function playAudioFallback(text, customRate) {
+      try {
+        if (currentFallbackAudio) {
+          currentFallbackAudio.pause();
+          currentFallbackAudio = null;
+        }
 
-      // Prefer natural female English voice if available
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(v =>
-        v.lang.startsWith("en") && (v.name.includes("Samantha") || v.name.includes("Google US English") || v.name.includes("Zira") || v.name.includes("Natural"))
-      ) || voices.find(v => v.lang.startsWith("en-US"));
+        const cleanText = text.replace(/[~*#_]/g, '').trim();
+        if (!cleanText) return;
 
-      if (preferredVoice) utter.voice = preferredVoice;
-
-      const indicator = document.getElementById("speakingIndicator");
-      utter.onstart = () => {
+        const indicator = document.getElementById("speakingIndicator");
         if (indicator) {
           indicator.classList.remove("hidden");
           indicator.classList.add("inline-flex");
         }
-      };
-      utter.onend = () => {
-        if (indicator) {
-          indicator.classList.add("hidden");
-          indicator.classList.remove("inline-flex");
-        }
-      };
-      utter.onerror = () => {
-        if (indicator) {
-          indicator.classList.add("hidden");
-          indicator.classList.remove("inline-flex");
-        }
-      };
 
-      window.speechSynthesis.speak(utter);
+        const encoded = encodeURIComponent(cleanText);
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encoded}`;
+        currentFallbackAudio = new Audio(audioUrl);
+        currentFallbackAudio.playbackRate = customRate || speechSpeed || 0.82;
+
+        currentFallbackAudio.onended = () => {
+          if (indicator) {
+            indicator.classList.add("hidden");
+            indicator.classList.remove("inline-flex");
+          }
+        };
+
+        currentFallbackAudio.onerror = () => {
+          if (indicator) {
+            indicator.classList.add("hidden");
+            indicator.classList.remove("inline-flex");
+          }
+        };
+
+        const playPromise = currentFallbackAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn("Audio fallback playback blocked:", err);
+            if (indicator) {
+              indicator.classList.add("hidden");
+              indicator.classList.remove("inline-flex");
+            }
+          });
+        }
+      } catch (e) {
+        console.error("Audio fallback error:", e);
+      }
+    }
+
+    // Unified speak function: Tries Web Speech API first, seamlessly falls back to Cloud Audio
+    function speakText(text, customRate) {
+      const cleanText = text.replace(/[~*#_]/g, '').trim();
+      if (!cleanText) return;
+
+      const rate = customRate || speechSpeed || 0.82;
+      const indicator = document.getElementById("speakingIndicator");
+
+      // Check if Web Speech API is natively available
+      const hasSpeechSynth = typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis;
+
+      if (hasSpeechSynth) {
+        try {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(cleanText);
+          utter.lang = "en-US";
+          utter.rate = rate;
+          utter.pitch = 1.05;
+
+          const voices = window.speechSynthesis.getVoices();
+          const preferredVoice = voices.find(v =>
+            v.lang && v.lang.startsWith("en") && (v.name.includes("Samantha") || v.name.includes("Google US English") || v.name.includes("Zira") || v.name.includes("Natural"))
+          ) || voices.find(v => v.lang && v.lang.startsWith("en-US"));
+
+          if (preferredVoice) utter.voice = preferredVoice;
+
+          let hasStarted = false;
+          utter.onstart = () => {
+            hasStarted = true;
+            if (indicator) {
+              indicator.classList.remove("hidden");
+              indicator.classList.add("inline-flex");
+            }
+          };
+          utter.onend = () => {
+            if (indicator) {
+              indicator.classList.add("hidden");
+              indicator.classList.remove("inline-flex");
+            }
+          };
+          utter.onerror = () => {
+            if (indicator) {
+              indicator.classList.add("hidden");
+              indicator.classList.remove("inline-flex");
+            }
+            // Fallback to Cloud Audio
+            playAudioFallback(cleanText, rate);
+          };
+
+          window.speechSynthesis.speak(utter);
+
+          // In some in-app mobile browsers (KakaoTalk, Instagram), speak() fails silently without firing onstart
+          setTimeout(() => {
+            if (!hasStarted && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+              playAudioFallback(cleanText, rate);
+            }
+          }, 350);
+          return;
+        } catch (e) {
+          console.warn("SpeechSynthesis error, falling back to audio:", e);
+        }
+      }
+
+      // Fallback to Cloud Audio if SpeechSynthesis is unavailable
+      playAudioFallback(cleanText, rate);
     }
 
     function speakHandsFreeSequence(aiResult) {
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
+      if (currentFallbackAudio) {
+        currentFallbackAudio.pause();
+        currentFallbackAudio = null;
+      }
 
-      const u1 = new SpeechSynthesisUtterance(aiResult.better_en);
-      u1.lang = "en-US";
-      u1.rate = speechSpeed;
+      const hasSpeechSynth = typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis;
+      if (hasSpeechSynth) {
+        try {
+          window.speechSynthesis.cancel();
+          const u1 = new SpeechSynthesisUtterance(aiResult.better_en);
+          u1.lang = "en-US";
+          u1.rate = speechSpeed;
 
-      const u2 = new SpeechSynthesisUtterance(aiResult.reply_en);
-      u2.lang = "en-US";
-      u2.rate = speechSpeed;
+          const u2 = new SpeechSynthesisUtterance(aiResult.reply_en);
+          u2.lang = "en-US";
+          u2.rate = speechSpeed;
 
-      const firstHint = aiResult.hints && aiResult.hints[0] ? aiResult.hints[0].en : "";
-      const u3 = new SpeechSynthesisUtterance(firstHint ? `Try saying: ${firstHint}` : "");
-      u3.lang = "en-US";
-      u3.rate = 0.8;
+          const firstHint = aiResult.hints && aiResult.hints[0] ? aiResult.hints[0].en : "";
+          const u3 = new SpeechSynthesisUtterance(firstHint ? `Try saying: ${firstHint}` : "");
+          u3.lang = "en-US";
+          u3.rate = 0.8;
 
-      const indicator = document.getElementById("speakingIndicator");
-      u1.onstart = () => {
-        indicator.classList.remove("hidden");
-        indicator.classList.add("inline-flex");
-      };
-      u3.onend = () => {
-        indicator.classList.add("hidden");
-        indicator.classList.remove("inline-flex");
-      };
+          const indicator = document.getElementById("speakingIndicator");
+          u1.onstart = () => {
+            if (indicator) {
+              indicator.classList.remove("hidden");
+              indicator.classList.add("inline-flex");
+            }
+          };
+          u3.onend = () => {
+            if (indicator) {
+              indicator.classList.add("hidden");
+              indicator.classList.remove("inline-flex");
+            }
+          };
 
-      window.speechSynthesis.speak(u1);
-      window.speechSynthesis.speak(u2);
-      if (firstHint) window.speechSynthesis.speak(u3);
+          window.speechSynthesis.speak(u1);
+          window.speechSynthesis.speak(u2);
+          if (firstHint) window.speechSynthesis.speak(u3);
+          return;
+        } catch (e) {}
+      }
+
+      // Hands-free fallback
+      playAudioFallback(aiResult.reply_en, speechSpeed);
     }
 
     // ==================== SPEECH RECOGNITION (STT) MODAL ====================
