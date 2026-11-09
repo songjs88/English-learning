@@ -2,14 +2,21 @@
   "name": "jennys-english-cafe",
   "version": "1.0.0",
   "description": "옆집 제니와 5분 영어 수다 (Jenny's 5-Min English Cafe)",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
-    "start": "npx serve .",
-    "deploy:gh-pages": "npx gh-pages -d .",
-    "deploy:vercel": "npx vercel --prod",
-    "deploy:netlify": "npx netlify deploy --prod --dir=."
+    "start": "node server.js",
+    "build": "echo Build complete"
   },
-  "keywords": ["english-learning", "pwa", "gemini-ai", "korean-english"],
+  "keywords": [
+    "english-learning",
+    "pwa",
+    "gemini-ai",
+    "korean-english",
+    "render-ready"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "author": "",
   "license": "MIT"
 }

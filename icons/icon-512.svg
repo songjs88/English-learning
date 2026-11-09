@@ -12,3 +12,4 @@
   <circle cx="256" cy="256" r="185" fill="#FFF5F2" filter="url(#shadow512)"/>
   <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-size="210" font-family="'Apple Color Emoji', 'Segoe UI Emoji', sans-serif">☕</text>
 </svg>
+
