@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#FDFBF7" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -24,7 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <!-- QR Code Generator for Mobile Scan -->
+  <!-- QR Code Generator -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
@@ -78,315 +78,212 @@
   </script>
 
   <style>
-    body {
+    html, body {
       background-color: #EFE8DC;
       color: #3D3028;
       font-family: 'Noto Sans KR', sans-serif;
       -webkit-tap-highlight-color: transparent;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #F8F3EA;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #D8C7B2;
-      border-radius: 9999px;
-    }
-
-    /* Animations */
-    @keyframes popIn {
-      0% { opacity: 0; transform: translateY(12px) scale(0.97); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .animate-pop {
-      animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes stampSlam {
-      0% { opacity: 0; transform: scale(2.8) rotate(-25deg); }
-      60% { opacity: 1; transform: scale(0.9) rotate(-8deg); }
-      80% { transform: scale(1.05) rotate(-12deg); }
-      100% { opacity: 1; transform: scale(1) rotate(-10deg); }
-    }
-    .animate-stamp {
-      animation: stampSlam 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    @keyframes pulseRing {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(238, 101, 70, 0.6); }
-      70% { transform: scale(1.03); box-shadow: 0 0 0 14px rgba(238, 101, 70, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(238, 101, 70, 0); }
-    }
-    .mic-pulse {
-      animation: pulseRing 1.8s infinite;
-    }
-
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
-    }
-    .animate-float {
-      animation: floatSlow 2.6s ease-in-out infinite;
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
     }
 
     /* Soundwave bars for speaking state */
     .wave-bar {
-      width: 4px;
+      width: 3px;
       background-color: #EE6546;
       border-radius: 999px;
       animation: soundWave 0.8s ease-in-out infinite;
     }
     .wave-bar:nth-child(2) { animation-delay: 0.15s; }
     .wave-bar:nth-child(3) { animation-delay: 0.3s; }
-    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
     @keyframes soundWave {
-      0%, 100% { height: 6px; }
-      50% { height: 18px; }
+      0%, 100% { height: 4px; }
+      50% { height: 14px; }
     }
 
-    /* Mobile Safe Area & Touch Ergonomics */
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .animate-pop {
+      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
     .safe-bottom {
-      padding-bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
     }
     .safe-top {
-      padding-top: calc(0.65rem + env(safe-area-inset-top, 0px));
-    }
-    button, input {
-      touch-action: manipulation;
-    }
-    /* Mobile Touch & Scroll Fixes */
-    #chatContainer {
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
-      touch-action: pan-y;
-      min-height: 0;
+      padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
     }
   </style>
 </head>
-<body class="min-h-screen flex justify-center items-start md:items-center md:py-4">
+<body class="bg-cream-100 flex flex-col min-h-screen pb-36">
 
-  <!-- Main App Container (Mobile/Tablet Friendly Frame) -->
-  <div class="w-full max-w-[540px] h-[100dvh] md:h-[94dvh] md:max-h-[920px] bg-cream-50 md:rounded-[32px] md:shadow-2xl md:border-4 md:border-white flex flex-col overflow-hidden relative" style="height: 100dvh; max-height: 100dvh;">
-
-    <!-- ==================== 1. TOP HEADER & CONTROL BAR ==================== -->
-    <header class="bg-white/95 backdrop-blur-md border-b border-cream-200 px-3.5 safe-top pb-2 shrink-0 z-20 shadow-sm">
-      <!-- Top Row: Brand & Stamp / Notebook / Share / Settings Buttons -->
-      <div class="flex items-center justify-between gap-1.5 mb-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <!-- Jenny Avatar with Online Dot -->
-          <div class="relative shrink-0 cursor-pointer" onclick="openSettingsModal()">
-            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-coral-100 to-honey-100 border-2 border-coral-400 flex items-center justify-center text-2xl shadow-sm">
-              👩🦰
-            </div>
-            <span id="aiStatusDot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" title="AI 대화 준비 완료"></span>
+  <!-- ==================== 1. TOP STICKY HEADER ==================== -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-cream-200 px-3 safe-top pb-2 shadow-sm">
+    <div class="max-w-xl mx-auto flex items-center justify-between gap-1.5">
+      <!-- Jenny Avatar & Brand -->
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="relative shrink-0 cursor-pointer" onclick="openSettingsModal()">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-coral-100 to-honey-100 border-2 border-coral-400 flex items-center justify-center text-xl shadow-sm">
+            👩🦰
           </div>
-          <div class="min-w-0">
-            <div class="flex items-center gap-1">
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-coral-100 text-coral-600">옆집 단짝</span>
-              <span id="speakingIndicator" class="hidden items-center gap-1 text-[11px] font-bold text-coral-600 bg-coral-50 px-2 py-0.5 rounded-full">
-                <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
-                <span class="truncate">말하는 중</span>
-              </span>
-            </div>
-            <h1 class="text-base sm:text-xl font-black text-cocoa-900 tracking-tight leading-snug truncate">
-              ☕ 옆집 제니와 5분 영어
-            </h1>
-          </div>
+          <span id="aiStatusDot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
         </div>
-
-        <!-- Right Action Buttons: Stamp, Review Note, Share & Settings -->
-        <div class="flex items-center gap-1 shrink-0">
-          <button onclick="openFinishModal()" class="flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="오늘의 여권 스탬프 & 영어 일기">
-            <span>🌺</span>
-            <span id="headerStampCount">1/4</span>
-          </button>
-          <button onclick="openNotebookModal()" class="relative flex items-center gap-1 bg-sage-50 hover:bg-sage-100 active:scale-95 text-sage-700 border border-sage-200 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="내가 저장한 문장 복습노트">
-            <span>📒</span>
-            <span class="hidden sm:inline">복습</span>
-            <span id="notebookBadge" class="bg-sage-600 text-white text-[11px] px-1.5 py-0.2 rounded-full font-extrabold">2</span>
-          </button>
-          <button onclick="openShareModal()" class="flex items-center gap-1 bg-honey-100 hover:bg-honey-300/60 active:scale-95 text-cocoa-900 border border-honey-300 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition shadow-sm" title="친구에게 앱 공유 & 내 폰 설치">
-            <i class="ph-bold ph-share-network text-coral-600 text-base"></i>
-            <span class="hidden sm:inline">공유</span>
-          </button>
-          <button onclick="openSettingsModal()" class="flex items-center justify-center bg-cream-100 hover:bg-cream-200 active:scale-95 text-cocoa-700 border border-cream-300 w-8 h-8 sm:w-9 sm:h-9 rounded-2xl font-extrabold text-sm transition shadow-sm" title="설정 (Gemini API 키 및 모드 설정)">
-            <i class="ph-bold ph-gear text-base sm:text-lg"></i>
-          </button>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] font-extrabold px-1.5 py-0.2 rounded-full bg-coral-100 text-coral-600">옆집 단짝</span>
+            <span id="speakingIndicator" class="hidden items-center gap-1 text-[10px] font-bold text-coral-600 bg-coral-50 px-1.5 py-0.2 rounded-full">
+              <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
+              <span>말하는 중</span>
+            </span>
+          </div>
+          <h1 class="text-sm sm:text-base font-black text-cocoa-900 tracking-tight leading-tight truncate">
+            ☕ 옆집 제니와 5분 영어
+          </h1>
         </div>
       </div>
 
-      <!-- Second Row: Speed Toggle & Hands-Free Mode Toggle & Mobile Install Shortcut -->
-      <div class="flex items-center justify-between gap-1.5 bg-cream-100/90 p-1.5 rounded-2xl border border-cream-200">
-        <!-- Speed Toggle -->
-        <button id="speedToggleBtn" onclick="toggleSpeechSpeed()" class="flex-1 flex items-center justify-center gap-1 py-1.5 sm:py-2 px-2 rounded-xl bg-white text-cocoa-800 font-bold text-xs sm:text-sm shadow-sm border border-cream-200 active:scale-95 transition">
-          <span id="speedEmoji" class="text-sm sm:text-base">🐢</span>
-          <span id="speedLabel" class="truncate">천천히 (0.8x)</span>
+      <!-- Header Action Buttons -->
+      <div class="flex items-center gap-1 shrink-0">
+        <button onclick="openFinishModal()" class="flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 px-2 py-1.5 rounded-xl font-extrabold text-xs transition" title="오늘의 스탬프">
+          <span>🌺</span>
+          <span id="headerStampCount">1/4</span>
         </button>
-
-        <!-- Hands-free Dishwashing Mode Toggle -->
-        <button id="handsFreeBtn" onclick="toggleHandsFree()" class="flex-1 flex items-center justify-center gap-1 py-1.5 sm:py-2 px-2 rounded-xl bg-transparent text-cocoa-700 font-bold text-xs sm:text-sm hover:bg-white/60 active:scale-95 transition">
-          <span class="text-sm sm:text-base">🧤</span>
-          <span id="handsFreeLabel" class="truncate">설거지모드 OFF</span>
+        <button onclick="openNotebookModal()" class="relative flex items-center gap-1 bg-sage-50 hover:bg-sage-100 active:scale-95 text-sage-700 border border-sage-200 px-2 py-1.5 rounded-xl font-extrabold text-xs transition" title="복습노트">
+          <span>📒</span>
+          <span id="notebookBadge" class="bg-sage-600 text-white text-[10px] px-1.5 rounded-full font-black">2</span>
         </button>
-
-        <!-- Mobile Home Screen Install Quick Button -->
-        <button onclick="openShareModal('install')" class="shrink-0 flex items-center justify-center gap-1 py-1.5 sm:py-2 px-2.5 rounded-xl bg-coral-50 hover:bg-coral-100 text-coral-600 border border-coral-200 font-extrabold text-xs sm:text-sm active:scale-95 transition">
-          <span>📱</span>
-          <span>폰설치</span>
+        <button id="speedToggleBtn" onclick="toggleSpeechSpeed()" class="flex items-center gap-1 bg-white hover:bg-cream-100 text-cocoa-800 border border-cream-300 px-2 py-1.5 rounded-xl font-bold text-xs transition" title="발음 속도">
+          <span id="speedEmoji">🐢</span>
+          <span id="speedLabel" class="hidden sm:inline">0.8x</span>
+        </button>
+        <button onclick="openShareModal()" class="flex items-center justify-center bg-honey-100 hover:bg-honey-200 text-cocoa-900 border border-honey-300 w-8 h-8 rounded-xl font-bold text-xs transition" title="앱 공유">
+          <i class="ph-bold ph-share-network text-coral-600 text-base"></i>
+        </button>
+        <button onclick="openSettingsModal()" class="flex items-center justify-center bg-cream-100 hover:bg-cream-200 text-cocoa-700 border border-cream-300 w-8 h-8 rounded-xl font-bold text-xs transition" title="설정">
+          <i class="ph-bold ph-gear text-base"></i>
         </button>
       </div>
+    </div>
+  </header>
 
-      <!-- Hands-Free Active Notice Banner -->
-      <div id="handsFreeBanner" class="hidden mt-2 bg-sage-600 text-white px-3.5 py-2 rounded-xl text-sm font-bold flex items-center justify-between animate-pop">
-        <div class="flex items-center gap-2">
-          <i class="ph-fill ph-speaker-high text-lg animate-bounce"></i>
-          <span>설거지 모드: 제니 답변 후 추천 대답까지 자동으로 읽어드려요!</span>
-        </div>
-        <button onclick="toggleHandsFree()" class="text-xs bg-white/20 px-2 py-1 rounded-lg hover:bg-white/30">끄기</button>
-      </div>
-    </header>
+  <!-- ==================== 2. MAIN SCROLLABLE CONTENT (100% UNIFIED FLOW) ==================== -->
+  <main class="flex-1 max-w-xl w-full mx-auto px-3.5 pt-3 space-y-3.5">
 
-    <!-- ==================== 2. CHAT & SCENARIO CONVERSATION WINDOW ==================== -->
-    <main id="chatContainer" class="flex-1 min-h-0 overflow-y-auto px-3 sm:px-4 py-3 space-y-3.5 overscroll-contain" style="-webkit-overflow-scrolling: touch; touch-action: pan-y;">
-      
-      <!-- 4-STEP SCENARIO TABS & PATTERN CARD (Naturally scrollable with the chat) -->
-      <section class="bg-cream-100/90 rounded-3xl p-2.5 sm:p-3 border-2 border-cream-200 shadow-sm space-y-2">
-        <!-- 4 Scenario Tabs -->
-        <div class="grid grid-cols-4 gap-1.5" id="scenarioTabs">
-          <!-- Rendered dynamically by JS -->
-        </div>
+    <!-- 4 SCENARIO TABS -->
+    <div class="grid grid-cols-4 gap-1.5" id="scenarioTabs">
+      <!-- Populated dynamically -->
+    </div>
 
-        <!-- Today's Key Pattern Card -->
-        <div class="bg-white rounded-2xl p-2.5 sm:p-3 border-2 border-coral-200 shadow-sm relative overflow-hidden transition-all duration-300">
-          <!-- Top Row: Badge & Collapsible Toggle -->
-          <div class="flex items-center justify-between gap-1 mb-1">
-            <div class="flex items-center gap-1.5 min-w-0">
-              <span id="scenarioBadge" class="text-[11px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full bg-coral-500 text-white truncate max-w-[200px] sm:max-w-none">
-                Step 2 · 오늘 저녁 메뉴 고민
-              </span>
-              <span class="text-[11px] font-bold text-cocoa-600 hidden sm:inline">오늘 이 표현 딱 1개만 써봐요!</span>
-            </div>
-            <button onclick="togglePatternCollapse()" id="patternCollapseBtn" class="shrink-0 text-[11px] font-extrabold text-cocoa-700 bg-cream-100 hover:bg-cream-200 active:scale-95 px-2 py-0.5 rounded-lg border border-cream-300 transition flex items-center gap-0.5">
-              <span>접기</span>
-              <span>▲</span>
-            </button>
-          </div>
-
-          <!-- Pattern Main Expression + Pronunciation Audio Button -->
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex-1 min-w-0">
-              <div class="flex flex-wrap items-baseline gap-x-2">
-                <p id="patternEn" class="font-en text-base sm:text-2xl font-black text-coral-600 tracking-tight truncate">
-                  I'm thinking of ~
-                </p>
-                <p id="patternMeaning" class="text-xs sm:text-base font-bold text-cocoa-800">
-                  (나 ~할까 생각 중이야)
-                </p>
-              </div>
-            </div>
-
-            <!-- Listen Pattern Button -->
-            <button onclick="speakCurrentPattern()" class="shrink-0 flex items-center gap-1 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 border border-coral-200 rounded-xl px-2.5 py-1.5 transition shadow-sm" title="원어민 발음 듣기">
-              <i class="ph-fill ph-speaker-high text-lg"></i>
-              <span class="text-xs font-black">발음 듣기</span>
-            </button>
-          </div>
-
-          <!-- Collapsible Details: Korean Pronunciation + 3-Turn Progress Bar -->
-          <div id="patternCollapsibleDetails" class="mt-2 space-y-2 border-t border-cream-200 pt-2 transition-all">
-            <p id="patternPron" class="text-xs sm:text-sm font-bold text-sage-700 bg-sage-50 inline-block px-2.5 py-1 rounded-lg border border-sage-200">
-              🗣️ 발음: [ 아임 띵킹 오브 ~ ]
-            </p>
-
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-1.5 flex-1 min-w-0">
-                <span class="text-[11px] font-extrabold text-cocoa-700 shrink-0">오늘의 미션</span>
-                <div class="flex-1 h-2 bg-cream-200 rounded-full overflow-hidden p-0.5">
-                  <div id="turnProgressBar" class="h-full bg-gradient-to-r from-coral-400 to-coral-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <span id="turnCountText" class="text-[11px] font-black text-coral-600 shrink-0">0 / 3마디</span>
-              </div>
-              <button onclick="openFinishModal()" class="text-[11px] font-extrabold text-sage-700 bg-sage-100 hover:bg-sage-200 px-2 py-0.5 rounded-lg transition shrink-0">
-                🌺 완료 도장
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Tip Banner for Konglish -->
-      <div class="bg-honey-50 border border-honey-300 rounded-2xl p-3 text-center shadow-sm">
-        <p class="text-sm sm:text-base font-bold text-cocoa-800">
-          💡 <span class="text-coral-600 font-extrabold">모르는 단어는 한국어로!</span> 반반 섞어 말해도 제니가 찰떡같이 알아들어요 😊
-        </p>
-        <p class="text-xs sm:text-sm text-cocoa-600 mt-0.5" id="konglishExampleText">
-          예시: "I'm thinking of 된장찌개" 또는 "김치찌개 끓일 거예요"
-        </p>
+    <!-- TODAY'S KEY PATTERN CARD -->
+    <div class="bg-white rounded-3xl p-3.5 border-2 border-coral-200 shadow-sm relative space-y-2.5">
+      <div class="flex items-center justify-between gap-2">
+        <span id="scenarioBadge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-coral-500 text-white truncate">
+          Step 2 · 오늘 저녁 메뉴 고민
+        </span>
+        <span class="text-xs font-bold text-cocoa-600">오늘 딱 이 1개만!</span>
       </div>
 
-      <!-- Messages will be injected here -->
-      <div id="chatMessages" class="space-y-5 pb-4"></div>
-
-      <!-- AI Thinking Indicator -->
-      <div id="aiTypingIndicator" class="hidden items-start gap-3 animate-pop">
-        <div class="w-11 h-11 rounded-2xl bg-coral-100 border-2 border-coral-300 flex items-center justify-center text-xl shrink-0">
-          👩🦰
+      <!-- Pattern Expression & Big Audio Button -->
+      <div class="flex items-center justify-between gap-2 bg-coral-50/60 p-3 rounded-2xl border border-coral-100">
+        <div class="flex-1 min-w-0">
+          <p id="patternEn" class="font-en text-xl sm:text-2xl font-black text-coral-600 tracking-tight leading-snug">
+            I'm thinking of ~
+          </p>
+          <p id="patternMeaning" class="text-sm font-bold text-cocoa-800 mt-0.5">
+            (나 ~할까 생각 중이야)
+          </p>
         </div>
-        <div class="bg-white border-2 border-cream-200 rounded-3xl rounded-tl-md px-4 py-3 shadow-sm">
-          <div class="flex items-center gap-2 text-base font-bold text-cocoa-700">
-            <span class="inline-block w-2.5 h-2.5 bg-coral-400 rounded-full animate-bounce"></span>
-            <span class="inline-block w-2.5 h-2.5 bg-coral-500 rounded-full animate-bounce" style="animation-delay:0.15s"></span>
-            <span class="inline-block w-2.5 h-2.5 bg-sage-500 rounded-full animate-bounce" style="animation-delay:0.3s"></span>
-            <span class="ml-1">제니가 반갑게 대답을 준비하고 있어요...</span>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- ==================== 4. 3-SECOND LIFESAVER HINT DRAWER ==================== -->
-    <div id="hintDrawer" class="hidden bg-honey-50 border-t-2 border-honey-300 px-4 py-3.5 shrink-0 z-20 shadow-lg animate-pop max-h-[52vh] overflow-y-auto">
-      <div class="flex items-center justify-between mb-2.5">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">💡</span>
-          <h3 class="text-base sm:text-lg font-black text-cocoa-900">이렇게 대답해 보세요! (클릭하면 바로 전송)</h3>
-        </div>
-        <button onclick="toggleHintDrawer(false)" class="text-sm font-bold text-cocoa-600 bg-white px-3 py-1 rounded-xl border border-cream-300 hover:bg-cream-100">
-          닫기 ✕
+        <button onclick="speakCurrentPattern()" class="shrink-0 flex flex-col items-center justify-center bg-coral-500 hover:bg-coral-600 active:scale-95 text-white rounded-2xl px-3.5 py-2.5 shadow-md transition">
+          <i class="ph-fill ph-speaker-high text-2xl"></i>
+          <span class="text-[11px] font-black mt-0.5">발음 듣기</span>
         </button>
       </div>
 
-      <!-- 3 Hint Cards Container -->
-      <div id="hintCardsList" class="space-y-2.5">
+      <!-- Pronunciation Guide -->
+      <p id="patternPron" class="text-xs sm:text-sm font-bold text-sage-700 bg-sage-50 px-3 py-1.5 rounded-xl border border-sage-200 inline-block">
+        🗣️ 발음: [ 아임 띵킹 오브 ~ ]
+      </p>
+
+      <!-- 3-Turn Progress Bar & Stamp Mission Button -->
+      <div class="flex items-center justify-between gap-2 pt-1 border-t border-cream-200">
+        <div class="flex items-center gap-1.5 flex-1 min-w-0">
+          <span class="text-xs font-black text-cocoa-700 shrink-0">오늘 미션</span>
+          <div class="flex-1 h-2.5 bg-cream-200 rounded-full overflow-hidden p-0.5">
+            <div id="turnProgressBar" class="h-full bg-gradient-to-r from-coral-400 to-coral-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span id="turnCountText" class="text-xs font-black text-coral-600 shrink-0">0 / 3마디</span>
+        </div>
+        <button onclick="openFinishModal()" class="text-xs font-black text-coral-600 bg-coral-50 hover:bg-coral-100 border border-coral-200 px-2.5 py-1 rounded-lg transition shrink-0">
+          🌺 완료 도장
+        </button>
+      </div>
+    </div>
+
+    <!-- KONGLISH FRIENDLY TIP -->
+    <div class="bg-honey-50 border border-honey-300 rounded-2xl p-2.5 text-center shadow-sm">
+      <p class="text-xs sm:text-sm font-bold text-cocoa-800">
+        💡 <span class="text-coral-600 font-extrabold">모르는 단어는 한국어로!</span> 섞어 말해도 제니가 찰떡같이 알아들어요 😊
+      </p>
+      <p class="text-[11px] sm:text-xs text-cocoa-600 mt-0.5" id="konglishExampleText">
+        예: "I'm thinking of 된장찌개"
+      </p>
+    </div>
+
+    <!-- CHAT MESSAGES CONTAINER -->
+    <div id="chatMessages" class="space-y-4 pt-1">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- AI TYPING INDICATOR -->
+    <div id="aiTypingIndicator" class="hidden items-start gap-2.5 animate-pop">
+      <div class="w-10 h-10 rounded-2xl bg-coral-100 border-2 border-coral-300 flex items-center justify-center text-xl shrink-0">
+        👩🦰
+      </div>
+      <div class="bg-white border-2 border-cream-200 rounded-2xl rounded-tl-md px-3.5 py-2.5 shadow-sm">
+        <div class="flex items-center gap-1.5 text-xs font-bold text-cocoa-700">
+          <span class="inline-block w-2 h-2 bg-coral-400 rounded-full animate-bounce"></span>
+          <span class="inline-block w-2 h-2 bg-coral-500 rounded-full animate-bounce" style="animation-delay:0.15s"></span>
+          <span class="inline-block w-2 h-2 bg-sage-500 rounded-full animate-bounce" style="animation-delay:0.3s"></span>
+          <span class="ml-1">제니가 대답을 준비하고 있어요...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3-SECOND HINTS CONTAINER (Always visible & interactive) -->
+    <div class="bg-honey-50 border-2 border-honey-300 rounded-3xl p-3.5 shadow-sm space-y-2 mt-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs sm:text-sm font-black text-cocoa-900 flex items-center gap-1">
+          <span>💡</span>
+          <span>이렇게 대답해 보세요! (누르면 바로 전송)</span>
+        </h3>
+      </div>
+      <div id="hintCardsList" class="space-y-2">
         <!-- Populated dynamically -->
       </div>
     </div>
 
-    <!-- ==================== 5. BOTTOM INPUT & HINT CHANCE BAR ==================== -->
-    <footer class="bg-white border-t border-cream-200 px-3.5 pt-2.5 safe-bottom shrink-0 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
-      <!-- Top Row of Footer: 3-Second Hint Chance Button + Quick Konglish Chip -->
-      <div class="flex items-center gap-2 mb-2.5">
-        <button id="hintToggleBtn" onclick="toggleHintDrawer()" class="flex-1 bg-gradient-to-r from-honey-300 via-honey-300 to-coral-200 hover:brightness-105 active:scale-[0.99] text-cocoa-900 font-black text-base py-2.5 px-4 rounded-2xl shadow-sm border-2 border-honey-500/40 flex items-center justify-center gap-2 transition">
-          <span class="text-xl animate-float">💡</span>
-          <span>어떻게 말하지? (3초 힌트 찬스 보기)</span>
-          <i id="hintChevron" class="ph-bold ph-caret-up text-lg"></i>
-        </button>
+  </main>
 
-        <button onclick="useKonglishSample()" class="shrink-0 bg-sage-50 hover:bg-sage-100 active:scale-95 text-sage-700 border border-sage-200 font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-2xl transition" title="반반 영어 예시 자동 입력">
-          🇰🇷+🇺🇸 반반영어 예시
+  <!-- ==================== 3. FIXED BOTTOM INPUT BAR ==================== -->
+  <footer class="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-cream-200 px-3 pt-2 safe-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+    <div class="max-w-xl mx-auto space-y-2">
+      <!-- Quick Konglish Sample Chip -->
+      <div class="flex items-center justify-between gap-1">
+        <button onclick="useKonglishSample()" class="text-xs font-bold text-sage-700 bg-sage-50 hover:bg-sage-100 px-3 py-1 rounded-xl border border-sage-200 active:scale-95 transition">
+          🇰🇷+🇺🇸 반반영어 예시 넣기
         </button>
+        <span class="text-[11px] text-cocoa-600 font-medium">영어로 또는 한국어로 편하게 말해보세요</span>
       </div>
 
-      <!-- Bottom Row: Big Microphone Button + Text Input + Send Button -->
-      <div class="flex items-center gap-2">
+      <!-- Main Input Controls -->
+      <div class="flex items-center gap-1.5">
         <!-- Big Mic Button -->
-        <button id="micBtn" onclick="openVoiceModal()" class="shrink-0 bg-coral-500 hover:bg-coral-600 active:scale-95 text-white font-black px-4 py-3.5 rounded-2xl shadow-md flex items-center gap-2 transition">
-          <i class="ph-fill ph-microphone text-2xl"></i>
-          <span class="text-base">눌러서 말하기</span>
+        <button onclick="openVoiceModal()" class="shrink-0 bg-coral-500 hover:bg-coral-600 active:scale-95 text-white font-black px-3.5 py-3 rounded-2xl shadow-md flex items-center gap-1.5 transition">
+          <i class="ph-fill ph-microphone text-xl"></i>
+          <span class="text-xs sm:text-sm font-black">말하기</span>
         </button>
 
         <!-- Text Input -->
@@ -395,449 +292,245 @@
             id="userInput"
             type="text"
             placeholder="영어·한국어 섞어 편하게 적어보세요"
-            class="w-full bg-cream-100 focus:bg-white text-cocoa-900 placeholder-cocoa-600/70 text-base sm:text-lg font-bold px-4 py-3.5 rounded-2xl border-2 border-cream-300 focus:border-coral-400 focus:outline-none transition"
+            class="w-full bg-cream-100 focus:bg-white text-cocoa-900 placeholder-cocoa-600/70 text-sm sm:text-base font-bold px-3.5 py-3 rounded-2xl border-2 border-cream-300 focus:border-coral-400 focus:outline-none transition"
             onkeydown="if(event.key === 'Enter') handleSendMessage()"
           />
         </div>
 
         <!-- Send Button -->
-        <button onclick="handleSendMessage()" class="shrink-0 bg-cocoa-800 hover:bg-cocoa-900 active:scale-95 text-white font-bold px-4 py-3.5 rounded-2xl shadow-md flex items-center justify-center transition" aria-label="전송">
-          <i class="ph-bold ph-paper-plane-tilt text-2xl"></i>
-        </button>
-      </div>
-    </footer>
-
-    <!-- ==================== MODAL 1: VOICE RECORDING & SIMULATION ==================== -->
-    <div id="voiceModal" class="hidden fixed inset-0 bg-cocoa-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div class="bg-cream-50 w-full max-w-[500px] rounded-t-[32px] sm:rounded-[32px] p-6 border-t-4 sm:border-4 border-white shadow-2xl animate-pop text-center">
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-coral-100 text-coral-600">🎤 음성으로 수다 떨기</span>
-          <button onclick="closeVoiceModal()" class="text-cocoa-600 hover:text-cocoa-900 font-bold text-base px-2 py-1">닫기 ✕</button>
-        </div>
-
-        <!-- Today's Pattern Reminder inside Voice Modal -->
-        <div class="bg-white rounded-2xl p-3.5 border border-cream-300 mb-4 text-left">
-          <p class="text-xs font-bold text-cocoa-600 mb-0.5">오늘의 패턴 힌트 (천천히 읽어도 괜찮아요!)</p>
-          <p id="voiceModalPatternEn" class="font-en text-xl font-black text-coral-600">I'm thinking of making kimchi stew.</p>
-          <p id="voiceModalPatternPron" class="text-base font-bold text-sage-700 mt-0.5">[ 아임 띵킹 오브 메이킹 김치 스튜 ]</p>
-        </div>
-
-        <!-- Animated Mic Circle -->
-        <div class="my-5 flex flex-col items-center">
-          <button id="recordToggleBtn" onclick="toggleSpeechRecognition()" class="w-24 h-24 rounded-full bg-coral-500 text-white flex items-center justify-center text-4xl shadow-lg mic-pulse transition">
-            <i id="recordIcon" class="ph-fill ph-microphone"></i>
-          </button>
-          <p id="voiceStatusText" class="text-lg font-black text-cocoa-900 mt-4">
-            마이크가 켜져 있어요! 편하게 말씀해 보세요 😊
-          </p>
-          <p class="text-sm font-medium text-cocoa-600 mt-1">
-            단어가 생각 안 나면 "I'm thinking of 된장찌개"처럼 말씀하셔도 돼요!
-          </p>
-        </div>
-
-        <!-- Recognized Live Transcript Box -->
-        <div class="bg-white rounded-2xl p-3.5 border-2 border-coral-200 min-h-[64px] flex items-center justify-center mb-4">
-          <p id="liveTranscriptText" class="text-lg font-extrabold text-cocoa-800">
-            ...듣고 있어요...
-          </p>
-        </div>
-
-        <!-- Quick Simulation Voice Buttons (For quiet environments or devices without mic permission) -->
-        <div class="text-left bg-cream-100 p-3.5 rounded-2xl border border-cream-200 mb-4">
-          <p class="text-xs font-extrabold text-cocoa-700 mb-2">
-            👆 지금 말하기 어려운 상황이라면 아래 버튼을 눌러 바로 말해보세요:
-          </p>
-          <div id="voiceQuickSamples" class="space-y-1.5">
-            <!-- Populated dynamically per scenario -->
-          </div>
-        </div>
-
-        <div class="flex gap-2">
-          <button onclick="closeVoiceModal()" class="flex-1 py-3.5 rounded-2xl bg-cream-200 text-cocoa-800 font-extrabold text-base">
-            취소
-          </button>
-          <button onclick="submitVoiceTranscript()" class="flex-1 py-3.5 rounded-2xl bg-coral-500 text-white font-extrabold text-base shadow-md">
-            이대로 말하기 ✨
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== MODAL 2: 3-TURN COMPLETION (DIARY & PASSPORT STAMP) ==================== -->
-    <div id="finishModal" class="hidden fixed inset-0 bg-cocoa-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div class="bg-cream-50 w-full max-w-[500px] max-h-[92vh] overflow-y-auto rounded-[32px] p-5 sm:p-6 border-4 border-white shadow-2xl animate-pop relative">
-        <!-- Top Close -->
-        <button onclick="closeFinishModal()" class="absolute top-4 right-4 bg-white hover:bg-cream-200 text-cocoa-800 w-9 h-9 rounded-full font-black border border-cream-300 flex items-center justify-center">
-          ✕
-        </button>
-
-        <!-- Celebration Header -->
-        <div class="text-center mb-4">
-          <div class="inline-block bg-honey-100 text-honey-600 font-black text-xs px-3 py-1 rounded-full border border-honey-300 mb-1">
-            🎉 오늘도 5분 영어 수다 성공!
-          </div>
-          <h2 class="text-2xl font-black text-cocoa-900">오늘의 여권 스탬프 & 감성 일기</h2>
-          <p class="text-sm font-bold text-cocoa-600 mt-0.5">제니와 나눈 대화가 멋진 영어 일기 한 줄로 완성되었어요!</p>
-        </div>
-
-        <!-- Passport Stamp Collection Card -->
-        <div class="bg-white rounded-2xl p-4 border-2 border-cream-200 mb-4 shadow-sm">
-          <div class="flex items-center justify-between mb-2.5">
-            <span class="text-sm font-black text-cocoa-800">✈️ 내 영어 여행 여권 스탬프</span>
-            <span id="modalStampProgress" class="text-xs font-extrabold text-coral-600 bg-coral-50 px-2.5 py-0.5 rounded-full">2 / 4 획득!</span>
-          </div>
-          <div id="stampGrid" class="grid grid-cols-4 gap-2">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-
-        <!-- Today's Emotional 1-Line English Diary Card -->
-        <div class="bg-gradient-to-br from-coral-50 via-white to-honey-50 rounded-3xl p-5 border-2 border-coral-200 shadow-md mb-4 relative overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-black text-coral-600 bg-white px-2.5 py-1 rounded-full border border-coral-200" id="diaryDateText">
-              2026년 오늘의 영어 일기
-            </span>
-            <span class="text-2xl" id="diaryEmoji">🍲</span>
-          </div>
-
-          <p id="diaryEnText" class="font-en text-xl sm:text-2xl font-black text-cocoa-900 leading-snug mb-1.5">
-            "Today, I talked with Jenny about making delicious soybean paste stew for dinner!"
-          </p>
-          <p id="diaryPronText" class="text-sm sm:text-base font-bold text-sage-700 mb-1.5">
-            [ 투데이, 아이 톡트 위드 제니 어바웃 메이킹 딜리셔스 소이빈 페이스트 스튜 포 디너! ]
-          </p>
-          <p id="diaryKoText" class="text-sm font-bold text-cocoa-600">
-            오늘 저녁으로 맛있는 된장찌개를 끓일 거라고 제니와 수다를 떨었다!
-          </p>
-
-          <div class="flex gap-2 mt-4">
-            <button onclick="speakDiary()" class="flex-1 bg-coral-500 hover:bg-coral-600 active:scale-95 text-white font-extrabold text-sm py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition">
-              <i class="ph-fill ph-speaker-high text-lg"></i>
-              <span>일기 원어민 낭독 듣기</span>
-            </button>
-            <button onclick="copyDiaryCard()" class="flex-1 bg-white hover:bg-cream-100 active:scale-95 text-cocoa-800 border border-cream-300 font-extrabold text-sm py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition">
-              <i class="ph-bold ph-share-network text-lg"></i>
-              <span>가족 단톡방에 자랑(복사)</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Expressions I Spoke Today -->
-        <div class="bg-white rounded-2xl p-4 border border-cream-200 mb-4">
-          <h3 class="text-sm font-black text-cocoa-800 mb-2.5 flex items-center gap-1.5">
-            <span>🗣️</span>
-            <span>오늘 내가 말한 원어민 표현 다시 듣기</span>
-          </h3>
-          <div id="todaySpokenList" class="space-y-2">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-2">
-          <button onclick="closeFinishModal(); openShareModal('share');" class="flex-1 py-3.5 rounded-2xl bg-honey-300 hover:bg-honey-500/40 text-cocoa-900 font-black text-base shadow-sm flex items-center justify-center gap-1.5">
-            <i class="ph-bold ph-share-network text-lg"></i>
-            <span>동네 친구에게 이 앱 공유하기</span>
-          </button>
-          <button onclick="closeFinishModal()" class="flex-1 py-3.5 rounded-2xl bg-cocoa-800 hover:bg-cocoa-900 text-white font-black text-base shadow-md">
-            계속 제니와 수다 떨기 ☕
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== MODAL 3: REVIEW NOTEBOOK (복습노트) ==================== -->
-    <div id="notebookModal" class="hidden fixed inset-0 bg-cocoa-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
-      <div class="bg-cream-50 w-full max-w-[500px] max-h-[88vh] flex flex-col rounded-[32px] p-5 sm:p-6 border-4 border-white shadow-2xl animate-pop">
-        <div class="flex items-center justify-between mb-3 shrink-0">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">📒</span>
-            <div>
-              <h2 class="text-xl font-black text-cocoa-900">내 보물 영어 복습노트</h2>
-              <p class="text-xs font-bold text-cocoa-600">제니가 알려준 원어민 표현을 소리 내어 읽어보세요</p>
-            </div>
-          </div>
-          <button onclick="closeNotebookModal()" class="bg-white hover:bg-cream-200 text-cocoa-800 w-9 h-9 rounded-full font-black border border-cream-300">✕</button>
-        </div>
-
-        <div id="notebookList" class="flex-1 overflow-y-auto space-y-2.5 pr-1 my-2">
-          <!-- Populated dynamically -->
-        </div>
-
-        <button onclick="closeNotebookModal()" class="mt-3 w-full py-3 rounded-2xl bg-sage-600 hover:bg-sage-700 text-white font-extrabold text-base shrink-0">
-          닫기
+        <button onclick="handleSendMessage()" class="shrink-0 bg-cocoa-800 hover:bg-cocoa-900 active:scale-95 text-white font-bold px-4 py-3 rounded-2xl shadow-md flex items-center justify-center transition" aria-label="전송">
+          <i class="ph-bold ph-paper-plane-tilt text-xl"></i>
         </button>
       </div>
     </div>
+  </footer>
 
-    <!-- ==================== MODAL 4: MOBILE SHARE & INSTALL CENTER (앱 공유 & 폰 설치) ==================== -->
-    <div id="shareAppModal" class="hidden fixed inset-0 bg-cocoa-900/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div class="bg-cream-50 w-full max-w-[500px] max-h-[92dvh] flex flex-col rounded-t-[32px] sm:rounded-[32px] p-5 sm:p-6 border-t-4 sm:border-4 border-white shadow-2xl animate-pop">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-3 shrink-0">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">📲</span>
-            <div>
-              <h2 class="text-xl font-black text-cocoa-900">모바일 앱 공유 & 내 폰에 설치</h2>
-              <p class="text-xs font-bold text-cocoa-600">스마트폰 홈 화면에 두고 친구들과 함께 수다 떨어요!</p>
-            </div>
-          </div>
-          <button onclick="closeShareModal()" class="bg-white hover:bg-cream-200 text-cocoa-800 w-9 h-9 rounded-full font-black border border-cream-300">✕</button>
-        </div>
+  <!-- ==================== MODAL 1: VOICE MODAL ==================== -->
+  <div id="voiceModal" class="hidden fixed inset-0 bg-cocoa-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cream-50 w-full max-w-md rounded-t-[32px] sm:rounded-[32px] p-5 border-t-4 sm:border-4 border-white shadow-2xl animate-pop text-center max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-coral-100 text-coral-600">🎤 음성으로 수다 떨기</span>
+        <button onclick="closeVoiceModal()" class="text-cocoa-600 hover:text-cocoa-900 font-bold text-sm px-2 py-1">닫기 ✕</button>
+      </div>
 
-        <!-- Tab Selector -->
-        <div class="grid grid-cols-3 gap-1.5 bg-cream-200/80 p-1.5 rounded-2xl mb-4 shrink-0">
-          <button id="shareTabBtn_share" onclick="switchShareTab('share')" class="py-2 px-2 rounded-xl font-black text-xs sm:text-sm bg-coral-500 text-white shadow-sm transition">
-            💬 친구에게 공유
-          </button>
-          <button id="shareTabBtn_qr" onclick="switchShareTab('qr')" class="py-2 px-2 rounded-xl font-black text-xs sm:text-sm text-cocoa-700 hover:bg-white/60 transition">
-            📷 폰 카메라 QR
-          </button>
-          <button id="shareTabBtn_install" onclick="switchShareTab('install')" class="py-2 px-2 rounded-xl font-black text-xs sm:text-sm text-cocoa-700 hover:bg-white/60 transition">
-            📱 홈화면 앱설치
-          </button>
-        </div>
+      <div class="bg-white rounded-2xl p-3 border border-cream-300 mb-3 text-left">
+        <p class="text-[11px] font-bold text-cocoa-600 mb-0.5">오늘의 문장 힌트</p>
+        <p id="voiceModalPatternEn" class="font-en text-base font-black text-coral-600">I'm thinking of making kimchi stew.</p>
+        <p id="voiceModalPatternPron" class="text-xs font-bold text-sage-700 mt-0.5">[ 아임 띵킹 오브 메이킹 김치 스튜 ]</p>
+      </div>
 
-        <!-- Tab Content Body -->
-        <div class="flex-1 overflow-y-auto space-y-4 pr-0.5">
+      <div class="my-4 flex flex-col items-center">
+        <button id="recordToggleBtn" onclick="toggleSpeechRecognition()" class="w-20 h-20 rounded-full bg-coral-500 text-white flex items-center justify-center text-3xl shadow-lg transition active:scale-95">
+          <i id="recordIcon" class="ph-fill ph-microphone"></i>
+        </button>
+        <p id="voiceStatusText" class="text-sm font-black text-cocoa-900 mt-3">
+          마이크를 누르고 말씀해 보세요 😊
+        </p>
+        <p class="text-xs text-cocoa-600 mt-0.5">
+          인앱 브라우저에서 마이크가 안 되면 아래 버튼을 누르면 바로 전송돼요!
+        </p>
+      </div>
 
-          <!-- TAB 1: SHARE TO FRIENDS (카카오톡 / 문자 / 초대장) -->
-          <div id="shareTabContent_share" class="space-y-3.5">
-            <!-- Preview Invitation Card -->
-            <div class="bg-gradient-to-br from-coral-50 via-white to-honey-50 rounded-3xl p-4 border-2 border-coral-200 shadow-sm">
-              <div class="flex items-center gap-2.5 mb-2">
-                <div class="w-11 h-11 rounded-2xl bg-coral-100 border border-coral-300 flex items-center justify-center text-2xl">👩🦰</div>
-                <div>
-                  <span class="text-[11px] font-black text-coral-600 bg-white px-2 py-0.5 rounded-full border border-coral-200">모바일 초대장 미리보기</span>
-                  <h3 class="text-base font-black text-cocoa-900 mt-0.5">☕ 옆집 제니와 5분 영어 티타임</h3>
-                </div>
-              </div>
-              <p class="text-sm font-bold text-cocoa-700 leading-relaxed bg-white/90 p-3 rounded-2xl border border-cream-200" id="invitePreviewText">
-                "틀려도 괜찮아요! 모르는 단어는 한국어로 섞어 말해도 옆집 친구 제니가 다정하게 원어민 표현으로 바꿔줘요. 우리 하루 5분씩 같이 영어 수다 떨어요! 🌺"
-              </p>
-            </div>
+      <div class="bg-white rounded-2xl p-3 border-2 border-coral-200 min-h-[56px] flex items-center justify-center mb-3">
+        <p id="liveTranscriptText" class="text-base font-black text-cocoa-800">
+          ...듣고 있어요...
+        </p>
+      </div>
 
-            <!-- Primary Native Share Button (Opens KakaoTalk / SMS / Share Sheet on Mobile) -->
-            <button onclick="triggerNativeShare()" class="w-full bg-coral-500 hover:bg-coral-600 active:scale-[0.99] text-white font-black text-base py-4 px-4 rounded-2xl shadow-md flex items-center justify-center gap-2 transition">
-              <i class="ph-fill ph-share-network text-2xl"></i>
-              <span>카카오톡 · 문자로 바로 공유하기</span>
-            </button>
+      <!-- Quick Simulation Buttons -->
+      <div class="text-left bg-cream-100 p-3 rounded-2xl border border-cream-200 mb-3">
+        <p class="text-xs font-black text-cocoa-700 mb-1.5">
+          👆 아래 문장 버튼을 누르면 음성처럼 바로 전송돼요:
+        </p>
+        <div id="voiceQuickSamples" class="space-y-1.5"></div>
+      </div>
 
-            <!-- Copy Invitation Text + Link -->
-            <div class="grid grid-cols-2 gap-2.5">
-              <button onclick="copyAppInvite('invite')" class="bg-white hover:bg-cream-100 active:scale-95 text-cocoa-900 border-2 border-cream-300 font-extrabold text-sm py-3.5 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-sm transition">
-                <span class="text-xl">💌</span>
-                <span>초대 문구 + 주소 복사</span>
-                <span class="text-[11px] text-cocoa-600 font-bold">단톡방에 붙여넣기</span>
-              </button>
-
-              <button onclick="downloadMobileAppFile()" class="bg-sage-50 hover:bg-sage-100 active:scale-95 text-sage-700 border-2 border-sage-200 font-extrabold text-sm py-3.5 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-sm transition">
-                <span class="text-xl">📥</span>
-                <span>앱 파일 통째로 저장</span>
-                <span class="text-[11px] text-sage-600 font-bold">카톡 파일로 전송 가능!</span>
-              </button>
-            </div>
-
-            <div class="bg-honey-50 border border-honey-300 rounded-2xl p-3 text-xs sm:text-sm font-bold text-cocoa-700 leading-relaxed">
-              💡 <strong>꿀팁:</strong> <strong>[📥 앱 파일 통째로 저장]</strong>을 누르면 이 앱이 파일 하나로 저장됩니다. 카카오톡 <strong>'나에게 보내기'</strong>나 친구 채팅방에 파일로 보내면 스마트폰에서 언제든 바로 열려요!
-            </div>
-          </div>
-
-          <!-- TAB 2: QR CODE FOR SMARTPHONE CAMERA -->
-          <div id="shareTabContent_qr" class="hidden space-y-3.5 text-center">
-            <div class="bg-white rounded-3xl p-5 border-2 border-cream-200 shadow-sm flex flex-col items-center">
-              <span class="text-xs font-extrabold text-coral-600 bg-coral-50 px-3 py-1 rounded-full border border-coral-200 mb-3">
-                📷 스마트폰 기본 카메라로 비춰보세요!
-              </span>
-
-              <!-- QR Code Container -->
-              <div id="qrCodeContainer" class="p-3 bg-white border-4 border-coral-200 rounded-2xl shadow-sm flex items-center justify-center min-h-[188px] min-w-[188px]"></div>
-
-              <p class="text-sm font-black text-cocoa-900 mt-3">
-                옆집 제니와 5분 영어 수다
-              </p>
-              <p class="text-xs font-bold text-cocoa-600 mt-0.5">
-                모임에서 친구들에게 이 화면을 보여주면 바로 함께할 수 있어요
-              </p>
-            </div>
-
-            <!-- Custom URL Input for QR (in case user hosts it on GitHub Pages / Netlify / etc.) -->
-            <div class="bg-white rounded-2xl p-3.5 border border-cream-200 text-left">
-              <label class="block text-xs font-extrabold text-cocoa-700 mb-1.5">
-                🔗 공유할 웹앱 주소 (배포한 도메인 주소가 있다면 여기에 입력하세요)
-              </label>
-              <div class="flex gap-1.5">
-                <input
-                  id="shareUrlInput"
-                  type="text"
-                  class="flex-1 bg-cream-100 text-cocoa-900 text-xs sm:text-sm font-bold px-3 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:border-coral-400"
-                  oninput="updateQrCodeFromInput()"
-                />
-                <button onclick="copyShareUrlOnly()" class="shrink-0 bg-cocoa-800 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-xl active:scale-95">
-                  주소 복사
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- TAB 3: ADD TO PHONE HOME SCREEN (아이폰 / 갤럭시 앱 설치 가이드) -->
-          <div id="shareTabContent_install" class="hidden space-y-3">
-            <!-- Direct PWA Install Banner -->
-            <div id="pwaInstallBanner" class="hidden bg-coral-500 text-white p-4 rounded-2xl shadow-md items-center justify-between gap-2">
-              <div>
-                <p class="text-sm font-black">📲 지금 바로 홈 화면에 설치할 수 있어요!</p>
-                <p class="text-xs text-coral-100 font-bold">복잡한 과정 없이 버튼 한 번으로 앱을 추가하세요.</p>
-              </div>
-              <button onclick="triggerPwaInstall()" class="shrink-0 bg-white text-coral-600 font-black text-xs px-3.5 py-2.5 rounded-xl shadow">
-                바로 설치
-              </button>
-            </div>
-
-            <!-- Galaxy / Android Guide -->
-            <div class="bg-white rounded-2xl p-4 border-2 border-sage-200 shadow-sm">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="bg-sage-600 text-white text-xs font-black px-2.5 py-1 rounded-full">갤럭시 (안드로이드)</span>
-                <span class="text-sm font-black text-cocoa-900">홈 화면에 앱 아이콘 만들기</span>
-              </div>
-              <ol class="text-xs sm:text-sm font-bold text-cocoa-700 space-y-1.5 list-decimal list-inside leading-relaxed">
-                <li>크롬이나 삼성 인터넷 우측 상단(또는 하단)의 <span class="text-coral-600 font-black">[ ⋮ 메뉴 ]</span> 또는 <span class="text-coral-600 font-black">[ ≡ ]</span> 버튼을 누릅니다.</li>
-                <li>메뉴에서 <span class="bg-honey-100 px-1.5 py-0.5 rounded font-black text-cocoa-900">'홈 화면에 추가'</span> 또는 <span class="bg-honey-100 px-1.5 py-0.5 rounded font-black text-cocoa-900">'앱 설치'</span>를 누르면 끝!</li>
-              </ol>
-            </div>
-
-            <!-- iPhone / iOS Guide -->
-            <div class="bg-white rounded-2xl p-4 border-2 border-coral-200 shadow-sm">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="bg-coral-500 text-white text-xs font-black px-2.5 py-1 rounded-full">아이폰 (Safari)</span>
-                <span class="text-sm font-black text-cocoa-900">홈 화면에 앱 아이콘 만들기</span>
-              </div>
-              <ol class="text-xs sm:text-sm font-bold text-cocoa-700 space-y-1.5 list-decimal list-inside leading-relaxed">
-                <li>사파리(Safari) 화면 맨 아래 가운데의 <span class="text-coral-600 font-black">[ 공유 버튼 (네모 위 화살표 📤) ]</span>을 누릅니다.</li>
-                <li>아래로 살짝 내려서 <span class="bg-honey-100 px-1.5 py-0.5 rounded font-black text-cocoa-900">'홈 화면에 추가 ➕'</span>를 누르면 바탕화면에 제니 앱이 생겨요!</li>
-              </ol>
-            </div>
-
-            <!-- KakaoTalk In-App Browser Notice -->
-            <div class="bg-cream-100 rounded-2xl p-3.5 border border-cream-300 text-xs font-bold text-cocoa-700 leading-relaxed">
-              💬 <strong>카카오톡 안에서 열었을 때 소리가 안 나거나 마이크가 안 켜진다면?</strong><br>
-              우측 하단 <span class="text-coral-600 font-extrabold">[ ⋮ ] → [다른 브라우저로 열기]</span>를 누르시면 음성 인식과 원어민 발음이 100% 완벽하게 작동해요!
-            </div>
-          </div>
-
-        </div>
-
-        <button onclick="closeShareModal()" class="mt-4 w-full py-3.5 rounded-2xl bg-cocoa-800 hover:bg-cocoa-900 text-white font-black text-base shrink-0">
-          닫기
+      <div class="flex gap-2">
+        <button onclick="closeVoiceModal()" class="flex-1 py-3 rounded-xl bg-cream-200 text-cocoa-800 font-black text-sm">
+          취소
+        </button>
+        <button onclick="submitVoiceTranscript()" class="flex-1 py-3 rounded-xl bg-coral-500 text-white font-black text-sm shadow">
+          이대로 말하기 ✨
         </button>
       </div>
     </div>
-
-    <!-- ==================== MODAL 5: SETTINGS & GEMINI API KEY MODAL ==================== -->
-    <div id="settingsModal" class="hidden fixed inset-0 bg-cocoa-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
-      <div class="bg-cream-50 w-full max-w-[480px] rounded-[32px] p-5 sm:p-6 border-4 border-white shadow-2xl animate-pop relative">
-        <button onclick="closeSettingsModal()" class="absolute top-4 right-4 bg-white hover:bg-cream-200 text-cocoa-800 w-9 h-9 rounded-full font-black border border-cream-300 flex items-center justify-center">
-          ✕
-        </button>
-
-        <div class="flex items-center gap-2 mb-3">
-          <span class="text-2xl">⚙️</span>
-          <div>
-            <h2 class="text-xl font-black text-cocoa-900">앱 설정 & AI 엔진</h2>
-            <p class="text-xs font-bold text-cocoa-600">제니의 인공지능 연결 상태를 확인하고 설정할 수 있어요</p>
-          </div>
-        </div>
-
-        <div class="space-y-4 my-3 text-left">
-          <!-- Current AI Status Banner -->
-          <div id="currentAiModeBanner" class="p-3.5 rounded-2xl border-2 flex items-center gap-3">
-            <span class="text-2xl" id="currentAiModeIcon">✨</span>
-            <div class="flex-1">
-              <p class="text-sm font-extrabold text-cocoa-900" id="currentAiModeTitle">스마트 내장 AI 모드 (기본)</p>
-              <p class="text-xs text-cocoa-600 font-medium" id="currentAiModeDesc">API 키 없이도 찰떡같이 알아듣고 원어민 표현으로 다정하게 대답해요.</p>
-            </div>
-          </div>
-
-          <!-- API Key Input -->
-          <div class="bg-white p-4 rounded-2xl border-2 border-cream-200 shadow-sm">
-            <label class="block text-xs font-black text-cocoa-800 mb-1">
-              Google Gemini API Key (선택사항)
-            </label>
-            <p class="text-[11px] text-cocoa-600 font-medium mb-2 leading-relaxed">
-              Google AI Studio에서 무료로 발급받은 키를 입력하시면 실시간 맞춤 대화가 가능합니다. 입력하지 않아도 모든 회화 기능은 100% 작동해요!
-            </p>
-            <input
-              id="apiKeyInput"
-              type="password"
-              placeholder="AIzaSy... 형식의 API 키를 입력하세요"
-              class="w-full bg-cream-100 text-cocoa-900 text-sm font-bold px-3.5 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:border-coral-400"
-            />
-            
-            <div class="mt-3 flex gap-2">
-              <button onclick="saveApiKey()" class="flex-1 py-2.5 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-black text-xs sm:text-sm shadow-sm transition">
-                API 키 저장
-              </button>
-              <button onclick="clearApiKey()" class="py-2.5 px-3 rounded-xl bg-cream-200 hover:bg-cream-300 text-cocoa-800 font-bold text-xs sm:text-sm transition">
-                초기화
-              </button>
-            </div>
-          </div>
-
-          <!-- Gemini Model Selection -->
-          <div class="bg-white p-4 rounded-2xl border-2 border-cream-200 shadow-sm">
-            <label class="block text-xs font-black text-cocoa-800 mb-1.5">
-              AI 모델 선택
-            </label>
-            <select id="modelSelect" onchange="saveModelSelection()" class="w-full bg-cream-100 text-cocoa-900 text-sm font-bold px-3 py-2.5 rounded-xl border border-cream-300 focus:outline-none focus:border-coral-400">
-              <option value="gemini-2.0-flash">Gemini 2.0 Flash (추천 · 빠르고 자연스러움)</option>
-              <option value="gemini-1.5-flash">Gemini 1.5 Flash (안정적)</option>
-              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-            </select>
-          </div>
-        </div>
-
-        <button onclick="closeSettingsModal()" class="w-full py-3.5 rounded-2xl bg-cocoa-800 hover:bg-cocoa-900 text-white font-black text-base shrink-0">
-          완료
-        </button>
-      </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toastBox" class="hidden fixed top-16 left-1/2 -translate-x-1/2 bg-cocoa-900 text-white px-5 py-3 rounded-2xl shadow-xl font-bold text-sm sm:text-base z-50 items-center gap-2 animate-pop">
-      <span id="toastIcon">✨</span>
-      <span id="toastMessage">복습노트에 저장되었어요!</span>
-    </div>
-
   </div>
 
-  <!-- ==================== APPLICATION SCRIPT ==================== -->
+  <!-- ==================== MODAL 2: FINISH & STAMP MODAL ==================== -->
+  <div id="finishModal" class="hidden fixed inset-0 bg-cocoa-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-cream-50 w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl p-5 border-4 border-white shadow-2xl animate-pop relative">
+      <button onclick="closeFinishModal()" class="absolute top-4 right-4 bg-white text-cocoa-800 w-8 h-8 rounded-full font-black border border-cream-300 flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="text-center mb-3">
+        <div class="inline-block bg-honey-100 text-honey-600 font-black text-xs px-2.5 py-0.5 rounded-full border border-honey-300 mb-1">
+          🎉 오늘도 5분 영어 수다 성공!
+        </div>
+        <h2 class="text-xl font-black text-cocoa-900">오늘의 여권 스탬프 & 영어 일기</h2>
+      </div>
+
+      <!-- Stamp Collection -->
+      <div class="bg-white rounded-2xl p-3.5 border-2 border-cream-200 mb-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-black text-cocoa-800">✈️ 내 영어 여행 여권 스탬프</span>
+          <span id="modalStampProgress" class="text-xs font-black text-coral-600 bg-coral-50 px-2 py-0.5 rounded-full">2 / 4 획득!</span>
+        </div>
+        <div id="stampGrid" class="grid grid-cols-4 gap-2"></div>
+      </div>
+
+      <!-- Diary Card -->
+      <div class="bg-gradient-to-br from-coral-50 via-white to-honey-50 rounded-2xl p-4 border-2 border-coral-200 shadow mb-3">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[11px] font-black text-coral-600 bg-white px-2 py-0.5 rounded-full border border-coral-200" id="diaryDateText">
+            오늘의 영어 일기
+          </span>
+          <span class="text-xl" id="diaryEmoji">🍲</span>
+        </div>
+        <p id="diaryEnText" class="font-en text-base font-black text-cocoa-900 leading-snug mb-1">
+          "Today, I talked with Jenny!"
+        </p>
+        <p id="diaryPronText" class="text-xs font-bold text-sage-700 mb-1">
+          [ 투데이, 아이 톡트 위드 제니! ]
+        </p>
+        <p id="diaryKoText" class="text-xs font-bold text-cocoa-600">
+          오늘 제니와 즐겁게 수다를 떨었다!
+        </p>
+        <div class="flex gap-2 mt-3">
+          <button onclick="speakDiary()" class="flex-1 bg-coral-500 hover:bg-coral-600 text-white font-black text-xs py-2 rounded-xl flex items-center justify-center gap-1 shadow transition">
+            <i class="ph-fill ph-speaker-high text-base"></i>
+            <span>일기 낭독 듣기</span>
+          </button>
+          <button onclick="copyDiaryCard()" class="flex-1 bg-white hover:bg-cream-100 text-cocoa-800 border border-cream-300 font-black text-xs py-2 rounded-xl flex items-center justify-center gap-1 shadow transition">
+            <i class="ph-bold ph-share-network text-base"></i>
+            <span>일기 복사</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="closeFinishModal(); openShareModal('share');" class="flex-1 py-3 rounded-2xl bg-honey-300 text-cocoa-900 font-black text-xs sm:text-sm shadow">
+          친구에게 자랑하기
+        </button>
+        <button onclick="closeFinishModal()" class="flex-1 py-3 rounded-2xl bg-cocoa-800 text-white font-black text-xs sm:text-sm shadow">
+          계속 수다 떨기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: NOTEBOOK MODAL ==================== -->
+  <div id="notebookModal" class="hidden fixed inset-0 bg-cocoa-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-cream-50 w-full max-w-md max-h-[85vh] flex flex-col rounded-3xl p-5 border-4 border-white shadow-2xl animate-pop">
+      <div class="flex items-center justify-between mb-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📒</span>
+          <div>
+            <h2 class="text-lg font-black text-cocoa-900">내 보물 영어 복습노트</h2>
+            <p class="text-xs text-cocoa-600">저장한 원어민 표현을 복습해 보세요</p>
+          </div>
+        </div>
+        <button onclick="closeNotebookModal()" class="bg-white text-cocoa-800 w-8 h-8 rounded-full font-black border border-cream-300">✕</button>
+      </div>
+
+      <div id="notebookList" class="flex-1 overflow-y-auto space-y-2.5 my-2"></div>
+
+      <button onclick="closeNotebookModal()" class="mt-2 w-full py-3 rounded-2xl bg-sage-600 text-white font-black text-sm shrink-0">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 4: SHARE MODAL ==================== -->
+  <div id="shareAppModal" class="hidden fixed inset-0 bg-cocoa-900/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cream-50 w-full max-w-md max-h-[90vh] flex flex-col rounded-t-3xl sm:rounded-3xl p-5 border-t-4 sm:border-4 border-white shadow-2xl animate-pop">
+      <div class="flex items-center justify-between mb-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📲</span>
+          <h2 class="text-lg font-black text-cocoa-900">앱 공유 & 설치</h2>
+        </div>
+        <button onclick="closeShareModal()" class="bg-white text-cocoa-800 w-8 h-8 rounded-full font-black border border-cream-300">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-3">
+        <!-- Kakao Notice -->
+        <div class="bg-honey-50 border border-honey-300 rounded-2xl p-3 text-xs font-bold text-cocoa-800 leading-relaxed">
+          💬 <strong>카카오톡에서 소리가 안 나거나 마이크가 안 켜진다면?</strong><br>
+          화면 우측 상단 <span class="text-coral-600 font-black">[ ⋮ ] → [다른 브라우저로 열기]</span>를 누르시면 크롬에서 100% 완벽하게 소리가 나와요!
+        </div>
+
+        <button onclick="triggerNativeShare()" class="w-full bg-coral-500 text-white font-black text-sm py-3.5 rounded-2xl shadow flex items-center justify-center gap-1.5 active:scale-95 transition">
+          <i class="ph-fill ph-share-network text-xl"></i>
+          <span>카카오톡 · 문자로 바로 공유하기</span>
+        </button>
+
+        <button onclick="copyAppInvite()" class="w-full bg-white text-cocoa-900 border-2 border-cream-300 font-black text-sm py-3 rounded-2xl shadow flex items-center justify-center gap-1.5 active:scale-95 transition">
+          <span>💌 초대 문구 + 주소 복사</span>
+        </button>
+      </div>
+
+      <button onclick="closeShareModal()" class="mt-3 w-full py-3 rounded-2xl bg-cocoa-800 text-white font-black text-sm shrink-0">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 5: SETTINGS MODAL ==================== -->
+  <div id="settingsModal" class="hidden fixed inset-0 bg-cocoa-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-cream-50 w-full max-w-sm rounded-3xl p-5 border-4 border-white shadow-2xl animate-pop relative">
+      <button onclick="closeSettingsModal()" class="absolute top-4 right-4 bg-white text-cocoa-800 w-8 h-8 rounded-full font-black border border-cream-300 flex items-center justify-center">✕</button>
+
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">⚙️</span>
+        <h2 class="text-lg font-black text-cocoa-900">앱 설정</h2>
+      </div>
+
+      <div class="space-y-3 my-2 text-left">
+        <div class="bg-white p-3 rounded-2xl border border-cream-200">
+          <label class="block text-xs font-black text-cocoa-800 mb-1">
+            Google Gemini API Key (선택사항)
+          </label>
+          <input
+            id="apiKeyInput"
+            type="password"
+            placeholder="AIzaSy... 형식의 API 키 입력"
+            class="w-full bg-cream-100 text-cocoa-900 text-xs font-bold px-3 py-2 rounded-xl border border-cream-300 focus:outline-none focus:border-coral-400"
+          />
+          <div class="mt-2 flex gap-1.5">
+            <button onclick="saveApiKey()" class="flex-1 py-2 rounded-xl bg-coral-500 text-white font-black text-xs">
+              저장
+            </button>
+            <button onclick="clearApiKey()" class="py-2 px-3 rounded-xl bg-cream-200 text-cocoa-800 font-bold text-xs">
+              초기화
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="closeSettingsModal()" class="w-full py-3 rounded-2xl bg-cocoa-800 text-white font-black text-sm mt-2">
+        완료
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBox" class="hidden fixed top-14 left-1/2 -translate-x-1/2 bg-cocoa-900 text-white px-4 py-2.5 rounded-2xl shadow-xl font-bold text-xs sm:text-sm z-50 items-center gap-2 animate-pop">
+    <span id="toastIcon">✨</span>
+    <span id="toastMessage">저장되었어요!</span>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    // Service Worker Registration for PWA support
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
-    }
-
-    // Gemini API Configuration & Storage
+    // Configuration & State
     let apiKey = localStorage.getItem("jenny_gemini_api_key") || "";
-    let GEMINI_MODEL = localStorage.getItem("jenny_gemini_model") || "gemini-2.0-flash";
-
-    // App State
-    let currentStepIndex = 1; // Default to Step 2 (오늘 저녁 메뉴 고민 - index 1)
-    let speechSpeed = 0.82; // Default slow & friendly speed (0.8x)
+    let GEMINI_MODEL = "gemini-2.0-flash";
+    let currentStepIndex = 1; // Default to Step 2
+    let speechSpeed = 0.82;
     let isSlowMode = true;
-    let isHandsFree = false;
     let recognition = null;
     let isRecording = false;
-    let isStartingRecognition = false;
 
-    // Prevent benign SpeechRecognition duplicate-start promise rejections
-    window.addEventListener("unhandledrejection", (event) => {
-      if (event.reason && event.reason.name === "InvalidStateError") {
-        event.preventDefault();
-      }
-    });
-
-    // Scenarios Definition (4 Steps)
+    // Scenarios Definition
     const SCENARIOS = [
       {
         id: 0,
@@ -852,30 +545,18 @@
         konglishSample: "Can I get a 따뜻한 라떼?",
         diaryDefault: {
           emoji: "☕",
-          en: "Today, I ordered a delicious iced vanilla latte at a cozy cafe in Hawaii!",
-          pron: "투데이, 아이 오더드 어 딜리셔스 아이스드 바닐라 라떼 앳 어 코지 카페 인 하와이!",
-          ko: "오늘 하와이의 아늑한 카페에서 맛있는 아이스 바닐라 라떼를 당당하게 주문했다!"
+          en: "Today, I ordered an iced vanilla latte at a cafe in Hawaii!",
+          pron: "투데이, 아이 오더드 언 아이스드 바닐라 라떼 앳 어 카페 인 하와이!",
+          ko: "오늘 하와이의 아늑한 카페에서 바닐라 라떼를 당당하게 주문했다!"
         },
         initialJenny: {
           en: "Aloha! Welcome to Jenny's Beach Cafe! What would you like to drink today?",
-          ko: "알로하! 제니의 하와이 해변 카페에 오신 걸 환영해요! 오늘 어떤 음료를 드시겠어요?",
+          ko: "알로하! 제니의 해변 카페에 오신 걸 환영해요! 오늘 어떤 음료를 드시겠어요?",
         },
         initialHints: [
-          {
-            en: "Can I get a warm cafe latte, please?",
-            pron: "캔 아이 겟 어 웜 카페 라떼, 플리즈?",
-            ko: "따뜻한 카페라떼 한 잔 주시겠어요?"
-          },
-          {
-            en: "Can I get an iced Americano?",
-            pron: "캔 아이 겟 언 아이스드 아메리카노?",
-            ko: "아이스 아메리카노 한 잔 주시겠어요?"
-          },
-          {
-            en: "Can I get a sweet vanilla latte and a croissant?",
-            pron: "캔 아이 겟 어 스윗 바닐라 라떼 앤 어 크루아상?",
-            ko: "달콤한 바닐라 라떼랑 크루아상 하나 주시겠어요?"
-          }
+          { en: "Can I get a warm cafe latte, please?", pron: "캔 아이 겟 어 웜 카페 라떼, 플리즈?", ko: "따뜻한 카페라떼 한 잔 주시겠어요?" },
+          { en: "Can I get an iced Americano?", pron: "캔 아이 겟 언 아이스드 아메리카노?", ko: "아이스 아메리카노 한 잔 주시겠어요?" },
+          { en: "Can I get a sweet vanilla latte?", pron: "캔 아이 겟 어 스윗 바닐라 라떼?", ko: "달콤한 바닐라 라떼 하나 주시겠어요?" }
         ]
       },
       {
@@ -891,30 +572,18 @@
         konglishSample: "I'm thinking of 보글보글 된장찌개",
         diaryDefault: {
           emoji: "🍲",
-          en: "Today, I chatted with Jenny about making warm and healthy dinner for my family!",
-          pron: "투데이, 아이 채티드 위드 제니 어바웃 메이킹 웜 앤 헬씨 디너 포 마이 패밀리!",
-          ko: "오늘 제니와 우리 가족을 위한 따뜻하고 건강한 저녁 식단 수다를 떨었다!"
+          en: "Today, I chatted with Jenny about making warm dinner for my family!",
+          pron: "투데이, 아이 채티드 위드 제니 어바웃 메이킹 웜 디너 포 마이 패밀리!",
+          ko: "오늘 제니와 우리 가족을 위한 따뜻한 저녁 식단 수다를 떨었다!"
         },
         initialJenny: {
           en: "Hi neighbor! It's already time to think about dinner. What are you thinking of making tonight?",
           ko: "안녕하세요 이웃님! 벌써 저녁 메뉴 고민할 시간이네요. 오늘 저녁엔 뭐 하실 생각이에요?",
         },
         initialHints: [
-          {
-            en: "I'm thinking of making soybean paste stew.",
-            pron: "아임 띵킹 오브 메이킹 소이빈 페이스트 스튜.",
-            ko: "구수한 된장찌개를 끓일까 생각 중이에요."
-          },
-          {
-            en: "I'm thinking of making kimchi fried rice.",
-            pron: "아임 띵킹 오브 메이킹 김치 프라이드 라이스.",
-            ko: "간단하게 김치볶음밥을 할까 생각 중이에요."
-          },
-          {
-            en: "I'm thinking of ordering fried chicken tonight!",
-            pron: "아임 띵킹 오브 오더링 프라이드 치킨 투나잇!",
-            ko: "오늘 저녁엔 치킨을 시켜 먹을까 생각 중이에요!"
-          }
+          { en: "I'm thinking of making soybean paste stew.", pron: "아임 띵킹 오브 메이킹 소이빈 페이스트 스튜.", ko: "구수한 된장찌개를 끓일까 생각 중이에요." },
+          { en: "I'm thinking of making kimchi fried rice.", pron: "아임 띵킹 오브 메이킹 김치 프라이드 라이스.", ko: "간단하게 김치볶음밥을 할까 생각 중이에요." },
+          { en: "I'm thinking of ordering fried chicken tonight!", pron: "아임 띵킹 오브 오더링 프라이드 치킨 투나잇!", ko: "오늘 저녁엔 치킨을 시켜 먹을까 생각 중이에요!" }
         ]
       },
       {
@@ -930,30 +599,18 @@
         konglishSample: "Could we have more 큰 수건 2개?",
         diaryDefault: {
           emoji: "🏨",
-          en: "Today, I confidently asked the hotel front desk for extra towels for my family!",
-          pron: "투데이, 아이 컨피던틀리 애스크드 더 호텔 프론트 데스크 포 엑스트라 타월즈 포 마이 패밀리!",
-          ko: "오늘 호텔 프런트에 우리 가족이 쓸 수건을 더 달라고 당당하게 영어로 요청했다!"
+          en: "Today, I asked the hotel front desk for extra towels for my family!",
+          pron: "투데이, 아이 애스크드 더 호텔 프론트 데스크 포 엑스트라 타월즈 포 마이 패밀리!",
+          ko: "오늘 호텔 프런트에 가족이 쓸 수건을 더 달라고 영어로 요청했다!"
         },
         initialJenny: {
           en: "Hello! This is the hotel front desk. How is your room? How can I help your family today?",
-          ko: "안녕하세요! 호텔 프런트 데스크입니다. 객실은 마음에 드시나요? 오늘 어떤 걸 도와드릴까요?",
+          ko: "안녕하세요! 호텔 프런트 데스크입니다. 오늘 어떤 걸 도와드릴까요?",
         },
         initialHints: [
-          {
-            en: "Could we have more clean towels, please?",
-            pron: "쿠드 위 해브 모어 클린 타월즈, 플리즈?",
-            ko: "깨끗한 수건 좀 더 받을 수 있을까요?"
-          },
-          {
-            en: "Could we have two more bottles of water?",
-            pron: "쿠드 위 해브 투 모어 바틀즈 오브 워터?",
-            ko: "생수 두 병만 더 받을 수 있을까요?"
-          },
-          {
-            en: "Could we have one more extra pillow?",
-            pron: "쿠드 위 해브 원 모어 엑스트라 필로우?",
-            ko: "베개를 하나만 더 받을 수 있을까요?"
-          }
+          { en: "Could we have more clean towels, please?", pron: "쿠드 위 해브 모어 클린 타월즈, 플리즈?", ko: "깨끗한 수건 좀 더 받을 수 있을까요?" },
+          { en: "Could we have two more bottles of water?", pron: "쿠드 위 해브 투 모어 바틀즈 오브 워터?", ko: "생수 두 병만 더 받을 수 있을까요?" },
+          { en: "Could we have one more extra pillow?", pron: "쿠드 위 해브 원 모어 엑스트라 필로우?", ko: "베개를 하나만 더 받을 수 있을까요?" }
         ]
       },
       {
@@ -969,198 +626,233 @@
         konglishSample: "I really enjoyed 눈물의 여왕 드라마!",
         diaryDefault: {
           emoji: "📺",
-          en: "Today, I had a lovely tea time with Jenny and talked about my favorite Korean drama!",
-          pron: "투데이, 아이 해드 어 러블리 티 타임 위드 제니 앤 톡트 어바웃 마이 페이보릿 코리안 드라마!",
-          ko: "오늘 제니와 향긋한 차를 마시며 내가 좋아하는 한국 드라마 이야기를 즐겁게 나눴다!"
+          en: "Today, I had a lovely tea time with Jenny and talked about Korean dramas!",
+          pron: "투데이, 아이 해드 어 러블리 티 타임 위드 제니 앤 톡트 어바웃 코리안 드라마즈!",
+          ko: "오늘 제니와 향긋한 차를 마시며 드라마 이야기를 즐겁게 나눴다!"
         },
         initialJenny: {
-          en: "Here is your warm chamomile tea! By the way, have you watched any good dramas or movies lately?",
-          ko: "따뜻한 캐모마일 차 여기 있어요! 그나저나 요즘 재밌게 보신 드라마나 영화 있으세요?",
+          en: "Here is your warm chamomile tea! By the way, have you watched any good dramas lately?",
+          ko: "따뜻한 캐모마일 차 여기 있어요! 그나저나 요즘 재밌게 보신 드라마 있으세요?",
         },
         initialHints: [
-          {
-            en: "I really enjoyed watching romantic Korean dramas!",
-            pron: "아이 리얼리 인조이드 워칭 로맨틱 코리안 드라마즈!",
-            ko: "로맨틱한 한국 드라마를 정말 재밌게 봤어요!"
-          },
-          {
-            en: "I really enjoyed the actors' great acting.",
-            pron: "아이 리얼리 인조이드 디 액터즈 그레이트 액팅.",
-            ko: "배우들의 멋진 연기를 정말 즐겁게 봤어요."
-          },
-          {
-            en: "I really enjoyed a cooking show on TV yesterday.",
-            pron: "아이 리얼리 인조이드 어 쿠킹 쇼 온 티비 예스터데이.",
-            ko: "어제 TV에서 한 요리 프로그램을 정말 재밌게 봤어요."
-          }
+          { en: "I really enjoyed watching romantic Korean dramas!", pron: "아이 리얼리 인조이드 워칭 로맨틱 코리안 드라마즈!", ko: "로맨틱한 한국 드라마를 정말 재밌게 봤어요!" },
+          { en: "I really enjoyed the actors' great acting.", pron: "아이 리얼리 인조이드 디 액터즈 그레이트 액팅.", ko: "배우들의 멋진 연기를 정말 즐겁게 봤어요." },
+          { en: "I really enjoyed a cooking show yesterday.", pron: "아이 리얼리 인조이드 어 쿠킹 쇼 예스터데이.", ko: "어제 TV 요리 프로그램을 정말 재밌게 봤어요." }
         ]
       }
     ];
 
-    // Per-Scenario Conversation History & Progress State
+    // Scenario State
     const scenarioState = SCENARIOS.map((sc, idx) => ({
       turns: 0,
-      stamped: idx === 0, // Step 1 pre-stamped
+      stamped: idx === 0,
       currentHints: [...sc.initialHints],
       diary: { ...sc.diaryDefault },
       spokenSentences: [],
-      messages: [
-        {
-          role: "jenny",
-          en: sc.initialJenny.en,
-          ko: sc.initialJenny.ko
-        }
-      ]
+      messages: [{ role: "jenny", en: sc.initialJenny.en, ko: sc.initialJenny.ko }]
     }));
 
-    // Saved Review Notebook Items
+    // Notebook items
     let savedNotebook = [
-      {
-        en: "I'm thinking of making soybean paste stew.",
-        pron: "아임 띵킹 오브 메이킹 소이빈 페이스트 스튜.",
-        ko: "된장찌개를 끓일까 생각 중이에요.",
-        stepTitle: "Step 2. 저녁 메뉴"
-      },
-      {
-        en: "Can I get a warm cafe latte, please?",
-        pron: "캔 아이 겟 어 웜 카페 라떼, 플리즈?",
-        ko: "따뜻한 카페라떼 한 잔 주시겠어요?",
-        stepTitle: "Step 1. 라떼 주문"
-      }
+      { en: "I'm thinking of making soybean paste stew.", pron: "아임 띵킹 오브 메이킹 소이빈 페이스트 스튜.", ko: "된장찌개를 끓일까 생각 중이에요.", stepTitle: "Step 2. 저녁 메뉴" },
+      { en: "Can I get a warm cafe latte, please?", pron: "캔 아이 겟 어 웜 카페 라떼, 플리즈?", ko: "따뜻한 카페라떼 한 잔 주시겠어요?", stepTitle: "Step 1. 라떼 주문" }
     ];
 
-    // ==================== INITIALIZATION ====================
-    let deferredPwaPrompt = null;
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPwaPrompt = e;
-      const banner = document.getElementById("pwaInstallBanner");
-      if (banner) {
-        banner.classList.remove("hidden");
-        banner.classList.add("flex");
-      }
-    });
-
-    window.onload = function () {
+    // Initialize
+    window.onload = function() {
       renderScenarioTabs();
-      selectScenario(1, false); // Start on Step 2
+      selectScenario(1, false);
       updateNotebookBadge();
       updateHeaderStamps();
       initSpeechRecognition();
       updateAiStatusUI();
     };
 
-    // Collapsible Pattern Card State for Mobile
-    let isPatternCollapsed = false;
+    // Unlock speech synthesis on user tap
+    window.addEventListener("touchstart", () => {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.resume();
+      }
+    }, { once: true });
+    window.addEventListener("click", () => {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.resume();
+      }
+    }, { once: true });
 
-    function togglePatternCollapse() {
-      isPatternCollapsed = !isPatternCollapsed;
-      const details = document.getElementById("patternCollapsibleDetails");
-      const btn = document.getElementById("patternCollapseBtn");
-      if (!details || !btn) return;
+    // ==================== SPEECH AUDIO (TTS) ====================
+    let activeAudio = null;
 
-      if (isPatternCollapsed) {
-        details.classList.add("hidden");
-        btn.innerHTML = '<span>펼치기</span><span>▼</span>';
-        btn.className = "shrink-0 text-[11px] font-black text-coral-600 bg-coral-50 hover:bg-coral-100 active:scale-95 px-2 py-0.5 rounded-lg border border-coral-200 transition flex items-center gap-0.5";
+    function speakCurrentPattern() {
+      const sc = SCENARIOS[currentStepIndex];
+      speakText(sc.patternEn.replace("~", ""));
+    }
+
+    function speakDiary() {
+      const state = scenarioState[currentStepIndex];
+      speakText(state.diary.en);
+    }
+
+    function speakText(text, customRate) {
+      const clean = text.replace(/[~*#_]/g, "").trim();
+      if (!clean) return;
+
+      const rate = customRate || speechSpeed || 0.82;
+      const indicator = document.getElementById("speakingIndicator");
+
+      // 1. First attempt: Web Speech API (Works on mobile Chrome, Safari, Android WebView)
+      if ("speechSynthesis" in window && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(clean);
+          utter.lang = "en-US";
+          utter.rate = rate;
+          utter.pitch = 1.0;
+
+          const voices = window.speechSynthesis.getVoices();
+          const enVoice = voices.find(v => v.lang && v.lang.startsWith("en"));
+          if (enVoice) utter.voice = enVoice;
+
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+
+          utter.onstart = () => {
+            if (indicator) {
+              indicator.classList.remove("hidden");
+              indicator.classList.add("inline-flex");
+            }
+          };
+          utter.onend = utter.onerror = () => {
+            if (indicator) {
+              indicator.classList.add("hidden");
+              indicator.classList.remove("inline-flex");
+            }
+          };
+
+          window.speechSynthesis.speak(utter);
+          return;
+        } catch (e) {
+          console.warn("SpeechSynthesis error:", e);
+        }
+      }
+
+      showToast("🔊", "소리가 나오지 않으면 브라우저 메뉴의 [다른 브라우저로 열기]를 눌러보세요!");
+    }
+
+    function toggleSpeechSpeed() {
+      isSlowMode = !isSlowMode;
+      speechSpeed = isSlowMode ? 0.82 : 1.0;
+      document.getElementById("speedEmoji").textContent = isSlowMode ? "🐢" : "🐇";
+      document.getElementById("speedLabel").textContent = isSlowMode ? "0.8x" : "1.0x";
+      showToast(isSlowMode ? "🐢" : "🐇", isSlowMode ? "천천히 듣기(0.8배속) 설정" : "보통 속도(1.0배속) 설정");
+    }
+
+    // ==================== SPEECH RECOGNITION (STT) ====================
+    function initSpeechRecognition() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) return;
+
+      recognition = new SpeechRec();
+      recognition.lang = "en-US";
+      recognition.interimResults = true;
+      recognition.continuous = false;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        const statusEl = document.getElementById("voiceStatusText");
+        if (statusEl) statusEl.textContent = "귀 기울여 듣고 있어요! 편하게 말씀하세요 👂";
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript) {
+          document.getElementById("liveTranscriptText").textContent = transcript;
+        }
+      };
+
+      recognition.onerror = () => {
+        isRecording = false;
+        const statusEl = document.getElementById("voiceStatusText");
+        if (statusEl) statusEl.textContent = "아래 예시 문장 버튼을 누르시면 바로 전송돼요 👇";
+      };
+
+      recognition.onend = () => {
+        isRecording = false;
+      };
+    }
+
+    function openVoiceModal() {
+      const sc = SCENARIOS[currentStepIndex];
+      const state = scenarioState[currentStepIndex];
+      const topHint = state.currentHints[0] || sc.initialHints[0];
+
+      document.getElementById("voiceModalPatternEn").textContent = topHint.en;
+      document.getElementById("voiceModalPatternPron").textContent = `🗣️ [ ${topHint.pron} ]`;
+      document.getElementById("liveTranscriptText").textContent = topHint.en;
+
+      const samplesContainer = document.getElementById("voiceQuickSamples");
+      const sampleItems = [
+        { label: `🇰🇷+🇺🇸 반반: "${sc.konglishSample}"`, val: sc.konglishSample },
+        ...state.currentHints.slice(0, 2).map(h => ({
+          label: `🇺🇸 "${h.en}" (${h.ko})`,
+          val: h.en
+        }))
+      ];
+
+      samplesContainer.innerHTML = sampleItems.map(item => `
+        <button
+          onclick="selectVoiceSample('${escapeQuotes(item.val)}')"
+          class="w-full text-left bg-white hover:bg-coral-50 border border-cream-300 px-3 py-2 rounded-xl text-xs font-bold text-cocoa-800 transition flex items-center justify-between"
+        >
+          <span class="truncate pr-2">${escapeHtml(item.label)}</span>
+          <span class="text-coral-600 font-black shrink-0">선택 👆</span>
+        </button>
+      `).join("");
+
+      document.getElementById("voiceModal").classList.remove("hidden");
+      if (recognition && !isRecording) {
+        try { recognition.start(); } catch(e){}
+      }
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        showToast("🎤", "아래 예시 문장 버튼을 누르면 바로 전송돼요!");
+        return;
+      }
+      if (isRecording) {
+        recognition.stop();
       } else {
-        details.classList.remove("hidden");
-        btn.innerHTML = '<span>접기</span><span>▲</span>';
-        btn.className = "shrink-0 text-[11px] font-extrabold text-cocoa-700 bg-cream-100 hover:bg-cream-200 active:scale-95 px-2 py-0.5 rounded-lg border border-cream-300 transition flex items-center gap-0.5";
+        try { recognition.start(); } catch(e){}
       }
     }
 
-    // Unlock Web Audio & Speech Context on first user touch or click
-    const unlockAudioContext = () => {
-      try {
-        if ("speechSynthesis" in window && window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-        // Prime audio element for mobile iOS/Android
-        const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
-        silentAudio.play().catch(() => {});
-      } catch (e) {}
-    };
-    window.addEventListener("click", unlockAudioContext, { once: true });
-    window.addEventListener("touchstart", unlockAudioContext, { once: true });
-
-    // Focus handler for mobile virtual keyboard
-    window.addEventListener("DOMContentLoaded", () => {
-      const input = document.getElementById("userInput");
-      if (input) {
-        input.addEventListener("focus", () => {
-          setTimeout(() => {
-            scrollToBottom();
-          }, 320);
-        });
-      }
-    });
-
-    // ==================== SETTINGS & AI ENGINE MODAL ====================
-    function openSettingsModal() {
-      const input = document.getElementById("apiKeyInput");
-      const model = document.getElementById("modelSelect");
-      if (input) input.value = apiKey;
-      if (model) model.value = GEMINI_MODEL;
-      updateAiStatusUI();
-      document.getElementById("settingsModal").classList.remove("hidden");
+    function selectVoiceSample(val) {
+      document.getElementById("liveTranscriptText").textContent = val;
+      submitVoiceTranscript();
     }
 
-    function closeSettingsModal() {
-      document.getElementById("settingsModal").classList.add("hidden");
-    }
-
-    function saveApiKey() {
-      const input = document.getElementById("apiKeyInput");
-      apiKey = input.value.trim();
-      localStorage.setItem("jenny_gemini_api_key", apiKey);
-      updateAiStatusUI();
-      showToast("🔑", apiKey ? "Google Gemini API 키가 저장되었어요!" : "API 키가 삭제되어 스마트 내장 AI 모드로 전환되었어요!");
-      closeSettingsModal();
-    }
-
-    function clearApiKey() {
-      apiKey = "";
-      localStorage.removeItem("jenny_gemini_api_key");
-      document.getElementById("apiKeyInput").value = "";
-      updateAiStatusUI();
-      showToast("🔄", "API 키가 초기화되어 스마트 내장 AI 모드로 전환되었어요!");
-    }
-
-    function saveModelSelection() {
-      const select = document.getElementById("modelSelect");
-      GEMINI_MODEL = select.value;
-      localStorage.setItem("jenny_gemini_model", GEMINI_MODEL);
-    }
-
-    function updateAiStatusUI() {
-      const dot = document.getElementById("aiStatusDot");
-      const banner = document.getElementById("currentAiModeBanner");
-      const icon = document.getElementById("currentAiModeIcon");
-      const title = document.getElementById("currentAiModeTitle");
-      const desc = document.getElementById("currentAiModeDesc");
-
-      if (apiKey) {
-        if (dot) dot.className = "absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 border-2 border-white rounded-full";
-        if (banner) {
-          banner.className = "p-3.5 rounded-2xl border-2 border-blue-200 bg-blue-50/70 flex items-center gap-3";
-          icon.textContent = "🌐";
-          title.textContent = `Google Gemini 클라우드 AI 연결됨 (${GEMINI_MODEL})`;
-          desc.textContent = "최신 생성형 AI 모델이 실시간으로 자연스러운 원어민 영어 수다를 제공합니다.";
-        }
-      } else {
-        if (dot) dot.className = "absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full";
-        if (banner) {
-          banner.className = "p-3.5 rounded-2xl border-2 border-emerald-200 bg-emerald-50/70 flex items-center gap-3";
-          icon.textContent = "✨";
-          title.textContent = "스마트 오프라인/내장 AI 모드 (기본)";
-          desc.textContent = "API 키나 인터넷 연결에 구애받지 않고 언제나 즉각적이고 다정하게 반응합니다.";
-        }
+    function submitVoiceTranscript() {
+      const text = document.getElementById("liveTranscriptText").textContent.trim();
+      closeVoiceModal();
+      if (text && text !== "...듣고 있어요...") {
+        document.getElementById("userInput").value = text;
+        handleSendMessage();
       }
     }
 
-    // ==================== RENDER TABS & SCENARIO SWITCH ====================
+    function closeVoiceModal() {
+      if (recognition && isRecording) {
+        try { recognition.stop(); } catch(e){}
+      }
+      document.getElementById("voiceModal").classList.add("hidden");
+    }
+
+    // ==================== SCENARIO TABS & RENDER ====================
     function renderScenarioTabs() {
       const container = document.getElementById("scenarioTabs");
       container.innerHTML = SCENARIOS.map((sc, idx) => {
@@ -1169,17 +861,17 @@
         return `
           <button
             onclick="selectScenario(${idx}, true)"
-            class="flex flex-col items-center justify-center py-2 px-1.5 rounded-2xl border-2 transition active:scale-95 ${
+            class="flex flex-col items-center justify-center py-2 px-1 rounded-2xl border-2 transition active:scale-95 ${
               isActive
                 ? 'bg-coral-500 text-white border-coral-600 shadow-md'
                 : 'bg-white text-cocoa-800 border-cream-200 hover:bg-cream-50'
             }"
           >
-            <div class="flex items-center gap-1 text-[11px] font-extrabold ${isActive ? 'text-coral-100' : 'text-cocoa-600'}">
-              <span>${sc.stepLabel}</span>
+            <div class="flex items-center gap-0.5 text-[10px] font-black ${isActive ? 'text-coral-100' : 'text-cocoa-600'}">
+              <span>${sc.stepLabel.split(' ')[0]}</span>
               ${isStamped ? '<span>🌺</span>' : ''}
             </div>
-            <div class="text-sm sm:text-base font-black mt-0.5 truncate w-full text-center">
+            <div class="text-xs sm:text-sm font-black mt-0.5 truncate w-full text-center">
               ${sc.shortTitle}
             </div>
           </button>
@@ -1194,24 +886,17 @@
 
       renderScenarioTabs();
 
-      // Update Top Pattern Card
       document.getElementById("scenarioBadge").textContent = `${sc.stepLabel} · ${sc.shortTitle.replace(/^[^\s]+\s/, '')}`;
       document.getElementById("patternEn").textContent = sc.patternEn;
       document.getElementById("patternMeaning").textContent = `(${sc.patternKo})`;
       document.getElementById("patternPron").textContent = `🗣️ 발음: [ ${sc.patternPron} ]`;
-      document.getElementById("konglishExampleText").textContent = `예시: "${sc.konglishSample}" 처럼 편하게 말씀해 보세요!`;
+      document.getElementById("konglishExampleText").textContent = `예시: "${sc.konglishSample}"`;
       document.getElementById("userInput").placeholder = `예: ${sc.konglishSample}`;
 
-      // Update Turn Progress
       updateTurnProgressUI();
-
-      // Render Chat Messages
       renderChatMessages();
-
-      // Render Hints inside Drawer
       renderHintCards();
 
-      // Speak Jenny's greeting if user switched tab
       if (speakGreeting && state.messages.length > 0) {
         const lastMsg = state.messages[state.messages.length - 1];
         if (lastMsg.role === "jenny") {
@@ -1234,7 +919,7 @@
       if (modalProg) modalProg.textContent = `${count} / 4 획득!`;
     }
 
-    // ==================== RENDER CHAT MESSAGES ====================
+    // ==================== CHAT MESSAGES & HINTS ====================
     function renderChatMessages() {
       const container = document.getElementById("chatMessages");
       const state = scenarioState[currentStepIndex];
@@ -1243,27 +928,25 @@
         if (msg.role === "jenny") {
           const safeEn = escapeQuotes(msg.en);
           return `
-            <div class="flex items-start gap-3 animate-pop">
-              <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-coral-100 to-honey-100 border-2 border-coral-300 flex items-center justify-center text-2xl shrink-0 shadow-sm mt-0.5">
+            <div class="flex items-start gap-2.5 animate-pop">
+              <div class="w-10 h-10 rounded-2xl bg-coral-100 border-2 border-coral-300 flex items-center justify-center text-xl shrink-0 shadow-sm mt-0.5">
                 👩🦰
               </div>
-              <div class="flex-1 max-w-[88%]">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="text-xs font-black text-cocoa-700">옆집 친구 제니</span>
-                </div>
-                <div class="bg-white border-2 border-cream-200 rounded-3xl rounded-tl-md p-4 shadow-sm">
-                  <p class="font-en text-lg sm:text-xl font-black text-cocoa-900 leading-snug">
+              <div class="flex-1 max-w-[90%]">
+                <span class="text-xs font-black text-cocoa-700 block mb-1">옆집 친구 제니</span>
+                <div class="bg-white border-2 border-cream-200 rounded-3xl rounded-tl-md p-3.5 shadow-sm">
+                  <p class="font-en text-base sm:text-lg font-black text-cocoa-900 leading-snug">
                     ${escapeHtml(msg.en)}
                   </p>
-                  <p class="text-base font-bold text-cocoa-600 mt-1.5 leading-relaxed">
+                  <p class="text-sm font-bold text-cocoa-600 mt-1 leading-relaxed">
                     ${escapeHtml(msg.ko)}
                   </p>
-                  <div class="mt-3 pt-2.5 border-t border-cream-100 flex items-center gap-2">
-                    <button onclick="speakText('${safeEn}')" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-coral-50 hover:bg-coral-100 active:scale-95 text-coral-600 px-3 py-1.5 rounded-xl font-extrabold text-sm transition">
-                      <i class="ph-fill ph-speaker-high text-base"></i>
+                  <div class="mt-2.5 pt-2 border-t border-cream-100 flex items-center gap-2">
+                    <button onclick="speakText('${safeEn}')" class="flex items-center gap-1 bg-coral-50 hover:bg-coral-100 text-coral-600 px-2.5 py-1 rounded-xl font-black text-xs transition">
+                      <i class="ph-fill ph-speaker-high text-sm"></i>
                       <span>다시 듣기</span>
                     </button>
-                    <button onclick="speakText('${safeEn}', 0.72)" class="flex items-center gap-1 bg-cream-100 hover:bg-cream-200 active:scale-95 text-cocoa-700 px-2.5 py-1.5 rounded-xl font-bold text-xs transition">
+                    <button onclick="speakText('${safeEn}', 0.72)" class="flex items-center gap-1 bg-cream-100 hover:bg-cream-200 text-cocoa-700 px-2 py-1 rounded-xl font-bold text-[11px] transition">
                       <span>🐢 천천히</span>
                     </button>
                   </div>
@@ -1272,7 +955,6 @@
             </div>
           `;
         } else {
-          // User Message + Storm of Praise & Native Expression Recasting Card
           const fb = msg.feedback;
           const safeBetterEn = fb ? escapeQuotes(fb.better_en) : "";
           const safeBetterPron = fb ? escapeQuotes(fb.better_pronunciation) : "";
@@ -1280,53 +962,41 @@
           const isSaved = fb && savedNotebook.some(item => item.en === fb.better_en);
 
           return `
-            <div class="flex flex-col items-end space-y-2.5 animate-pop">
-              <!-- User's Raw Spoken Bubble -->
-              <div class="max-w-[85%] bg-coral-500 text-white rounded-3xl rounded-tr-md px-4 py-3 shadow-md">
-                <div class="text-xs font-bold text-coral-100 mb-0.5">내가 한 말</div>
-                <p class="text-lg sm:text-xl font-extrabold leading-snug break-words">
+            <div class="flex flex-col items-end space-y-2 animate-pop">
+              <div class="max-w-[85%] bg-coral-500 text-white rounded-3xl rounded-tr-md px-4 py-2.5 shadow-md">
+                <span class="text-[10px] text-coral-100 block">내가 한 말</span>
+                <p class="text-base sm:text-lg font-black leading-snug break-words">
                   "${escapeHtml(msg.text)}"
                 </p>
               </div>
 
-              <!-- Recasting Feedback Card -->
               ${fb ? `
-                <div class="w-full max-w-[92%] bg-gradient-to-br from-sage-50 via-white to-honey-50 border-2 border-sage-200 rounded-3xl p-4 shadow-sm">
-                  <!-- Praise Badge -->
-                  <div class="inline-flex items-center gap-1.5 bg-honey-100 text-cocoa-900 border border-honey-300 px-3 py-1 rounded-full text-sm font-black mb-2">
+                <div class="w-full max-w-[95%] bg-gradient-to-br from-sage-50 via-white to-honey-50 border-2 border-sage-200 rounded-3xl p-3.5 shadow-sm">
+                  <div class="inline-flex items-center gap-1 bg-honey-100 text-cocoa-900 border border-honey-300 px-2.5 py-0.5 rounded-full text-xs font-black mb-1.5">
                     <span>👏</span>
                     <span>${escapeHtml(fb.praise_ko)}</span>
                   </div>
-
-                  <div class="text-xs font-extrabold text-sage-700 mb-1">
-                    ✨ 원어민 친구들은 이렇게 말해요 (소리 내어 읽어보세요!)
+                  <div class="text-[11px] font-black text-sage-700 mb-0.5">
+                    ✨ 원어민 친구는 이렇게 말해요:
                   </div>
-
-                  <!-- Better English Expression -->
-                  <p class="font-en text-lg sm:text-xl font-black text-cocoa-900 leading-snug">
+                  <p class="font-en text-base sm:text-lg font-black text-cocoa-900 leading-snug">
                     "${escapeHtml(fb.better_en)}"
                   </p>
-
-                  <!-- Korean Pronunciation Guide -->
-                  <p class="text-base sm:text-lg font-extrabold text-coral-600 bg-coral-50/80 border border-coral-200 rounded-xl px-3 py-1.5 mt-2">
+                  <p class="text-sm font-black text-coral-600 bg-coral-50/80 border border-coral-200 rounded-xl px-2.5 py-1 mt-1.5 inline-block">
                     🗣️ [${escapeHtml(fb.better_pronunciation)}]
                   </p>
-
-                  <p class="text-sm font-bold text-cocoa-600 mt-1.5">
+                  <p class="text-xs font-bold text-cocoa-600 mt-1">
                     뜻: ${escapeHtml(fb.better_ko)}
                   </p>
 
-                  <!-- Action Buttons -->
-                  <div class="flex flex-wrap items-center gap-2 mt-3 pt-2.5 border-t border-sage-200/70">
-                    <button onclick="speakText('${safeBetterEn}')" class="flex-1 flex items-center justify-center gap-1.5 bg-sage-600 hover:bg-sage-700 active:scale-95 text-white px-3.5 py-2 rounded-xl font-extrabold text-sm shadow-sm transition">
-                      <i class="ph-fill ph-speaker-high text-lg"></i>
-                      <span>원어민 발음 듣기</span>
+                  <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-sage-200/70">
+                    <button onclick="speakText('${safeBetterEn}')" class="flex-1 flex items-center justify-center gap-1 bg-sage-600 hover:bg-sage-700 text-white px-3 py-1.5 rounded-xl font-black text-xs shadow transition">
+                      <i class="ph-fill ph-speaker-high text-base"></i>
+                      <span>발음 듣기</span>
                     </button>
-                    <button onclick="saveToNotebook('${safeBetterEn}', '${safeBetterPron}', '${safeBetterKo}', ${mIdx})" class="flex items-center justify-center gap-1.5 ${
-                      isSaved
-                        ? 'bg-honey-300 text-cocoa-900 border-honey-500'
-                        : 'bg-white hover:bg-honey-50 text-cocoa-800 border-cream-300'
-                    } border px-3.5 py-2 rounded-xl font-extrabold text-sm shadow-sm active:scale-95 transition">
+                    <button onclick="saveToNotebook('${safeBetterEn}', '${safeBetterPron}', '${safeBetterKo}')" class="flex items-center justify-center gap-1 ${
+                      isSaved ? 'bg-honey-300 text-cocoa-900' : 'bg-white text-cocoa-800 border border-cream-300'
+                    } px-3 py-1.5 rounded-xl font-black text-xs shadow transition">
                       <span>${isSaved ? '⭐ 저장됨' : '⭐ 복습노트 저장'}</span>
                     </button>
                   </div>
@@ -1336,18 +1006,8 @@
           `;
         }
       }).join("");
-
-      scrollToBottom();
     }
 
-    function scrollToBottom() {
-      const chatContainer = document.getElementById("chatContainer");
-      setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 60);
-    }
-
-    // ==================== 3-SECOND LIFESAVER HINT DRAWER ====================
     function renderHintCards() {
       const state = scenarioState[currentStepIndex];
       const listEl = document.getElementById("hintCardsList");
@@ -1355,19 +1015,18 @@
       listEl.innerHTML = state.currentHints.map((h) => {
         const safeEn = escapeQuotes(h.en);
         return `
-          <div class="bg-white rounded-2xl p-3.5 border-2 border-honey-300 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div class="flex-1">
-              <p class="font-en text-lg font-black text-cocoa-900 leading-snug">${escapeHtml(h.en)}</p>
-              <p class="text-base font-extrabold text-coral-600 mt-0.5">🗣️ [${escapeHtml(h.pron)}]</p>
-              <p class="text-sm font-bold text-cocoa-600 mt-0.5">${escapeHtml(h.ko)}</p>
+          <div class="bg-white rounded-2xl p-2.5 border border-honey-300 shadow-sm flex items-center justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <p class="font-en text-sm sm:text-base font-black text-cocoa-900 truncate">${escapeHtml(h.en)}</p>
+              <p class="text-xs font-black text-coral-600 truncate">[${escapeHtml(h.pron)}]</p>
+              <p class="text-xs font-bold text-cocoa-600 truncate">${escapeHtml(h.ko)}</p>
             </div>
-            <div class="flex sm:flex-col gap-1.5 shrink-0">
-              <button onclick="speakText('${safeEn}')" class="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-cream-100 hover:bg-cream-200 active:scale-95 text-cocoa-800 font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl transition">
-                <i class="ph-fill ph-speaker-high text-base text-coral-600"></i>
-                <span>들어보기</span>
+            <div class="flex gap-1 shrink-0">
+              <button onclick="speakText('${safeEn}')" class="p-2 bg-cream-100 hover:bg-cream-200 rounded-xl text-coral-600 font-bold" title="들어보기">
+                <i class="ph-fill ph-speaker-high text-lg"></i>
               </button>
-              <button onclick="sendHintMessage('${safeEn}')" class="flex-1 sm:flex-none flex items-center justify-center gap-1 bg-coral-500 hover:bg-coral-600 active:scale-95 text-white font-extrabold text-xs sm:text-sm px-3 py-2 rounded-xl shadow-sm transition">
-                <span>이 문장으로 말하기 👆</span>
+              <button onclick="sendHintMessage('${safeEn}')" class="bg-coral-500 hover:bg-coral-600 text-white font-black text-xs px-3 py-2 rounded-xl shadow transition">
+                말하기 👆
               </button>
             </div>
           </div>
@@ -1375,25 +1034,8 @@
       }).join("");
     }
 
-    function toggleHintDrawer(forceState) {
-      const drawer = document.getElementById("hintDrawer");
-      const chevron = document.getElementById("hintChevron");
-      const isHidden = drawer.classList.contains("hidden");
-      const shouldShow = typeof forceState === "boolean" ? forceState : isHidden;
-
-      if (shouldShow) {
-        renderHintCards();
-        drawer.classList.remove("hidden");
-        chevron.className = "ph-bold ph-caret-down text-lg";
-      } else {
-        drawer.classList.add("hidden");
-        chevron.className = "ph-bold ph-caret-up text-lg";
-      }
-    }
-
-    function sendHintMessage(enText) {
-      toggleHintDrawer(false);
-      document.getElementById("userInput").value = enText;
+    function sendHintMessage(text) {
+      document.getElementById("userInput").value = text;
       handleSendMessage();
     }
 
@@ -1402,59 +1044,43 @@
       const input = document.getElementById("userInput");
       input.value = sc.konglishSample;
       input.focus();
-      showToast("✨", "반반 영어 예시가 입력되었어요! [전송]을 눌러보세요.");
+      showToast("✨", "예시 문장이 입력되었어요! 전송 버튼을 누르세요.");
     }
 
-    // ==================== SEND MESSAGE & GEMINI AI INTEGRATION ====================
+    // ==================== SEND MESSAGE ====================
     async function handleSendMessage() {
       const inputEl = document.getElementById("userInput");
       const rawText = inputEl.value.trim();
-      if (!rawText) {
-        showToast("💬", "하고 싶은 말을 적거나 [💡 힌트 찬스]를 눌러보세요!");
-        return;
-      }
+      if (!rawText) return;
 
       inputEl.value = "";
-      toggleHintDrawer(false);
-
       const state = scenarioState[currentStepIndex];
       const sc = SCENARIOS[currentStepIndex];
 
-      // Show temporary user bubble while awaiting AI response
       const userMsgIndex = state.messages.length;
-      state.messages.push({
-        role: "user",
-        text: rawText,
-        feedback: null
-      });
+      state.messages.push({ role: "user", text: rawText, feedback: null });
       renderChatMessages();
 
-      // Show typing indicator
       const typingEl = document.getElementById("aiTypingIndicator");
       typingEl.classList.remove("hidden");
       typingEl.classList.add("flex");
-      scrollToBottom();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-      // Get AI Response (Gemini API with fast smart fallback)
       let aiResult = null;
       if (apiKey) {
         try {
           aiResult = await fetchJennyResponseFromGemini(rawText, sc, state);
-        } catch (err) {
-          console.warn("Gemini API call failed, using intelligent local recasting:", err);
+        } catch(e) {
           aiResult = generateSmartLocalFallback(rawText, sc, state);
         }
       } else {
-        // Fast local fallback
-        await new Promise(r => setTimeout(r, 450));
+        await new Promise(r => setTimeout(r, 400));
         aiResult = generateSmartLocalFallback(rawText, sc, state);
       }
 
-      // Hide typing indicator
       typingEl.classList.add("hidden");
       typingEl.classList.remove("flex");
 
-      // Attach Recasting Feedback to user's message
       state.messages[userMsgIndex].feedback = {
         praise_ko: aiResult.praise_ko,
         better_en: aiResult.better_en,
@@ -1462,14 +1088,12 @@
         better_ko: aiResult.better_ko
       };
 
-      // Save spoken expression for Today's Summary
       state.spokenSentences.push({
         en: aiResult.better_en,
         pron: aiResult.better_pronunciation,
         ko: aiResult.better_ko
       });
 
-      // Update Diary if provided
       if (aiResult.diary_en && aiResult.diary_ko) {
         state.diary = {
           emoji: sc.diaryDefault.emoji,
@@ -1479,19 +1103,12 @@
         };
       }
 
-      // Add Jenny's reply
-      state.messages.push({
-        role: "jenny",
-        en: aiResult.reply_en,
-        ko: aiResult.reply_ko
-      });
+      state.messages.push({ role: "jenny", en: aiResult.reply_en, ko: aiResult.reply_ko });
 
-      // Update Contextual Hints for next turn
       if (Array.isArray(aiResult.hints) && aiResult.hints.length >= 3) {
         state.currentHints = aiResult.hints.slice(0, 3);
       }
 
-      // Increment Turn Count
       state.turns += 1;
       if (state.turns >= 3 && !state.stamped) {
         state.stamped = true;
@@ -1500,680 +1117,118 @@
       }
       updateTurnProgressUI();
       renderChatMessages();
+      renderHintCards();
 
-      // Speak Jenny's Reply
-      if (isHandsFree) {
-        speakHandsFreeSequence(aiResult);
-      } else {
-        speakText(aiResult.reply_en);
-      }
+      speakText(aiResult.reply_en);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-      // If user just hit 3 turns, celebrate & open stamp modal
       if (state.turns === 3) {
-        playCelebrationChime();
-        setTimeout(() => {
-          openFinishModal();
-        }, 1600);
+        setTimeout(() => openFinishModal(), 1500);
       }
     }
 
-    // ==================== GEMINI API CALL WITH STRUCTURED JSON ====================
-    async function fetchJennyResponseFromGemini(userText, scenario, state) {
-      const activeKey = apiKey || localStorage.getItem("jenny_gemini_api_key");
-      if (!activeKey) throw new Error("No API key available");
-
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${activeKey}`;
-
-      const systemInstruction = `
-당신은 한국 학습자(특히 40~60대 가정주부 및 왕초보)의 다정하고 따뜻한 외국인 옆집 친구 '제니(Jenny)'입니다.
-현재 시나리오: "${scenario.fullTitle}"
-오늘의 핵심 영어 패턴: "${scenario.patternEn}" (${scenario.patternKo})
-
-[필수 수칙]
-1. 사용자가 영어 단어를 몰라 한국어를 섞어 말하거나(예: "I'm thinking of 된장찌개", "수건 더 주세요") 문법이 틀려도 절대 지적하지 마세요.
-2. 무조건 폭풍 칭찬(praise_ko)부터 해주세요 (예: "우와! 의미가 100% 완벽하게 통했어요! 👏", "발음과 센스가 정말 최고예요! 🥰").
-3. 사용자가 원래 하고 싶었던 말을 가장 자연스럽고 쉬운 원어민 영어 1문장(better_en)으로 바꿔주고, 소리 내어 읽기 쉬운 한글 발음 가이드(better_pronunciation)와 한국어 뜻(better_ko)을 제공하세요.
-4. 제니의 대답(reply_en)은 왕초보가 듣기 쉽게 무조건 1~2문장(18단어 이내)으로 다정하게 작성하고, 꼬리 질문을 하나 던져 대화를 이어가세요.
-5. 다음 턴에 사용자가 대답할 수 있는 쉬운 추천 대답 3개(hints)를 영어, 한글 발음, 한국어 뜻으로 함께 만들어 주세요.
-6. 오늘 대화를 바탕으로 한 감성 한 줄 영어 일기(diary_en, diary_pron, diary_ko)도 만들어 주세요.
-      `.trim();
-
-      const recentHistory = state.messages.slice(-4).map(m =>
-        m.role === "jenny" ? `Jenny: ${m.en}` : `User: ${m.text}`
-      ).join("\n");
-
-      const prompt = `
-최근 대화 내역:
-${recentHistory}
-
-사용자의 방금 발화: "${userText}"
-위 발화에 대해 JSON 형식으로 응답해 주세요.
-      `.trim();
-
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "OBJECT",
-            properties: {
-              praise_ko: { type: "STRING" },
-              better_en: { type: "STRING" },
-              better_pronunciation: { type: "STRING" },
-              better_ko: { type: "STRING" },
-              reply_en: { type: "STRING" },
-              reply_ko: { type: "STRING" },
-              diary_en: { type: "STRING" },
-              diary_pron: { type: "STRING" },
-              diary_ko: { type: "STRING" },
-              hints: {
-                type: "ARRAY",
-                items: {
-                  type: "OBJECT",
-                  properties: {
-                    en: { type: "STRING" },
-                    pron: { type: "STRING" },
-                    ko: { type: "STRING" }
-                  },
-                  required: ["en", "pron", "ko"]
-                }
-              }
-            },
-            required: [
-              "praise_ko",
-              "better_en",
-              "better_pronunciation",
-              "better_ko",
-              "reply_en",
-              "reply_ko",
-              "diary_en",
-              "diary_pron",
-              "diary_ko",
-              "hints"
-            ]
-          }
-        }
-      };
-
-      // Exponential backoff
-      let delay = 800;
-      for (let attempt = 0; attempt < 2; attempt++) {
-        try {
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          if (!response.ok) throw new Error("API status " + response.status);
-          const result = await response.json();
-          const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (jsonText) {
-            return JSON.parse(jsonText);
-          }
-        } catch (e) {
-          if (attempt === 1) throw e;
-          await new Promise(r => setTimeout(r, delay));
-          delay *= 2;
-        }
-      }
-      throw new Error("Fallback triggered");
-    }
-
-    // ==================== SMART CONTEXT-AWARE LOCAL FALLBACK ====================
+    // ==================== LOCAL SMART FALLBACK ====================
     function generateSmartLocalFallback(userText, scenario, state) {
       const t = userText.toLowerCase();
-
-      const foodMap = [
-        { kw: ["된장", "soybean"], en: "soybean paste stew", pron: "소이빈 페이스트 스튜", ko: "구수한 된장찌개" },
-        { kw: ["김치찌개", "김치 스튜", "kimchi stew"], en: "spicy kimchi stew", pron: "스파이시 김치 스튜", ko: "얼큰한 김치찌개" },
-        { kw: ["김치볶음밥", "볶음밥", "fried rice"], en: "kimchi fried rice", pron: "김치 프라이드 라이스", ko: "김치볶음밥" },
-        { kw: ["삼겹살", "고기", "pork"], en: "grilled pork belly", pron: "그릴드 포크 벨리", ko: "노릇노릇 삼겹살" },
-        { kw: ["불고기", "bulgogi"], en: "sweet bulgogi", pron: "스윗 불고기", ko: "달콤한 불고기" },
-        { kw: ["파스타", "스파게티", "pasta"], en: "creamy tomato pasta", pron: "크리미 토마토 파스타", ko: "부드러운 파스타" },
-        { kw: ["치킨", "chicken"], en: "crispy fried chicken", pron: "크리스피 프라이드 치킨", ko: "바삭한 치킨" },
-        { kw: ["미역국", "seaweed"], en: "warm seaweed soup", pron: "웜 씨위드 수프", ko: "따뜻한 미역국" },
-        { kw: ["비빔밥", "bibimbap"], en: "healthy bibimbap", pron: "헬씨 비빔밥", ko: "건강한 비빔밥" },
-        { kw: ["떡볶이", "tteokbokki"], en: "spicy rice cakes", pron: "스파이시 라이스 케이크", ko: "매콤한 떡볶이" }
-      ];
-
-      const cafeMap = [
-        { kw: ["아이스 라떼", "시원한 라떼", "iced latte"], en: "an iced cafe latte", pron: "언 아이스드 카페 라떼", ko: "시원한 아이스 카페라떼" },
-        { kw: ["따뜻한 라떼", "라떼", "latte"], en: "a warm cafe latte", pron: "어 웜 카페 라떼", ko: "따뜻한 카페라떼" },
-        { kw: ["바닐라", "vanilla"], en: "a sweet vanilla latte", pron: "어 스윗 바닐라 라떼", ko: "달콤한 바닐라 라떼" },
-        { kw: ["아메리카노", "커피", "americano"], en: "an iced Americano", pron: "언 아이스드 아메리카노", ko: "시원한 아메리카노" },
-        { kw: ["차", "티", "tea", "캐모마일"], en: "a warm chamomile tea", pron: "어 웜 캐모마일 티", ko: "따뜻한 캐모마일 차" },
-        { kw: ["빵", "크루아상", "케이크", "croissant"], en: "a warm butter croissant", pron: "어 웜 버터 크루아상", ko: "따뜻한 버터 크루아상" }
-      ];
-
-      const hotelMap = [
-        { kw: ["수건", "타월", "towel"], en: "two more clean towels", pron: "투 모어 클린 타월즈", ko: "깨끗한 수건 두 장" },
-        { kw: ["물", "생수", "water"], en: "two more bottles of water", pron: "투 모어 바틀즈 오브 워터", ko: "생수 두 병" },
-        { kw: ["베개", "필로우", "pillow"], en: "one more soft pillow", pron: "원 모어 소프트 필로우", ko: "푹신한 베개 하나" },
-        { kw: ["담요", "이불", "blanket"], en: "an extra warm blanket", pron: "언 엑스트라 웜 블랭킷", ko: "따뜻한 여분 담요" }
-      ];
-
       const praises = [
-        "우와! 의미가 100% 완벽하게 통했어요! 센스 최고예요 👏",
-        "어머! 핵심 표현을 정말 자연스럽게 잘 쓰셨어요! 🥰",
-        "너무 잘하셨어요! 외국인 친구가 들으면 바로 고개를 끄덕일 표현이에요 👍",
-        "세상에! 영어로 수다 떠는 감각이 정말 뛰어나신데요? 🌟"
+        "우와! 의미가 100% 완벽하게 통했어요! 👏",
+        "어머! 핵심 표현을 정말 자연스럽게 쓰셨네요! 🥰",
+        "너무 잘하셨어요! 외국인 친구가 들으면 바로 이해할 표현이에요 👍"
       ];
       const randomPraise = praises[(state.turns + userText.length) % praises.length];
 
-      // Scenario 0: Cafe Order
       if (scenario.id === 0) {
-        const matched = cafeMap.find(item => item.kw.some(k => t.includes(k))) || cafeMap[1];
-        const isTakeout = t.includes("포장") || t.includes("to go") || t.includes("투고");
-        const isHere = t.includes("먹고") || t.includes("매장") || t.includes("here");
-
-        if (isTakeout || isHere) {
-          return {
-            praise_ko: randomPraise,
-            better_en: isHere ? "For here, please. Thank you so much!" : "To go, please. Have a nice day!",
-            better_pronunciation: isHere ? "포 히얼, 플리즈. 땡큐 쏘 머치!" : "투 고, 플리즈. 해브 어 나이스 데이!",
-            better_ko: isHere ? "매장에서 마실게요. 정말 고마워요!" : "포장해 주세요. 좋은 하루 보내세요!",
-            reply_en: "Perfect! Your drink will be ready in two minutes. Enjoy your time in Hawaii!",
-            reply_ko: "완벽해요! 음료는 2분 뒤에 바로 준비해 드릴게요. 하와이에서 행복한 시간 보내세요!",
-            diary_en: `Today, I ordered ${matched.en} in English at a lovely beach cafe!`,
-            diary_pron: `투데이, 아이 오더드 ${matched.pron} 인 잉글리시 앳 어 러블리 비치 카페!`,
-            diary_ko: `오늘 해변 카페에서 영어로 당당하게 ${matched.ko}를 주문했다!`,
-            hints: [
-              { en: "Thank you! This cafe is so beautiful.", pron: "땡큐! 디스 카페 이즈 쏘 뷰티풀.", ko: "고마워요! 이 카페 정말 예쁘네요." },
-              { en: "Can I get a napkin, please?", pron: "캔 아이 겟 어 냅킨, 플리즈?", ko: "냅킨도 조금 주시겠어요?" },
-              { en: "Can I get the Wi-Fi password?", pron: "캔 아이 겟 더 와이파이 패스워드?", ko: "와이파이 비밀번호도 알 수 있을까요?" }
-            ]
-          };
-        }
-
         return {
           praise_ko: randomPraise,
-          better_en: `Can I get ${matched.en}, please?`,
-          better_pronunciation: `캔 아이 겟 ${matched.pron}, 플리즈?`,
-          better_ko: `${matched.ko} 한 잔 주시겠어요?`,
-          reply_en: `Sure! Coming right up! Would you like that for here or to go?`,
-          reply_ko: `그럼요! 금방 준비해 드릴게요! 매장에서 드시나요, 아니면 포장해 드릴까요?`,
-          diary_en: `Today, I ordered ${matched.en} at Jenny's Hawaii Cafe!`,
-          diary_pron: `투데이, 아이 오더드 ${matched.pron} 앳 제니즈 하와이 카페!`,
-          diary_ko: `오늘 제니의 하와이 카페에서 ${matched.ko}를 멋지게 주문했다!`,
+          better_en: "Can I get a warm cafe latte, please?",
+          better_pronunciation: "캔 아이 겟 어 웜 카페 라떼, 플리즈?",
+          better_ko: "따뜻한 카페라떼 한 잔 주시겠어요?",
+          reply_en: "Sure! Coming right up! Would you like that for here or to go?",
+          reply_ko: "그럼요! 금방 준비해 드릴게요! 매장에서 드시나요, 아니면 포장해 드릴까요?",
+          diary_en: "Today, I ordered coffee in English at Jenny's Cafe!",
+          diary_pron: "투데이, 아이 오더드 커피 인 잉글리시 앳 제니즈 카페!",
+          diary_ko: "오늘 제니의 카페에서 영어로 라떼를 당당히 주문했다!",
           hints: [
             { en: "For here, please!", pron: "포 히얼, 플리즈!", ko: "매장에서 마시고 갈게요!" },
             { en: "To go, please!", pron: "투 고, 플리즈!", ko: "테이크아웃(포장)으로 해주세요!" },
-            { en: "Can I get a piece of cake, too?", pron: "캔 아이 겟 어 피스 오브 케이크, 투?", ko: "케이크도 한 조각 같이 주시겠어요?" }
+            { en: "Can I get a croissant too?", pron: "캔 아이 겟 어 크루아상 투?", ko: "크루아상도 하나 주시겠어요?" }
           ]
         };
       }
 
-      // Scenario 1: Dinner Menu
       if (scenario.id === 1) {
-        const matched = foodMap.find(item => item.kw.some(k => t.includes(k)));
-        if (matched) {
-          return {
-            praise_ko: randomPraise,
-            better_en: `I'm thinking of making ${matched.en} tonight.`,
-            better_pronunciation: `아임 띵킹 오브 메이킹 ${matched.pron} 투나잇.`,
-            better_ko: `오늘 저녁엔 ${matched.ko}를 만들까 생각 중이에요.`,
-            reply_en: `Wow, ${matched.en} sounds so delicious! My mouth is watering! Does your family love it too?`,
-            reply_ko: `우와, ${matched.ko}라니 정말 맛있겠어요! 벌써 군침이 도네요! 가족분들도 다 좋아하는 메뉴인가요?`,
-            diary_en: `Today, I told Jenny that I'm thinking of making ${matched.en} for dinner!`,
-            diary_pron: `투데이, 아이 톨드 제니 댓 아임 띵킹 오브 메이킹 ${matched.pron} 포 디너!`,
-            diary_ko: `오늘 저녁으로 ${matched.ko}를 할 생각이라고 제니와 즐겁게 수다를 떨었다!`,
-            hints: [
-              { en: "Yes! My family really loves it.", pron: "예스! 마이 패밀리 리얼리 러브즈 잇.", ko: "네! 우리 가족이 정말 좋아하는 메뉴예요." },
-              { en: "I'm thinking of going to the mart now.", pron: "아임 띵킹 오브 고잉 투 더 마트 나우.", ko: "이제 재료 사러 마트에 갈까 생각 중이에요." },
-              { en: "Come over and have dinner with us!", pron: "컴 오버 앤 해브 디너 위드 어스!", ko: "제니 씨도 우리 집에 와서 같이 저녁 먹어요!" }
-            ]
-          };
-        }
+        const isKimchi = t.includes("김치");
+        const isSoy = t.includes("된장");
+        const dishEn = isKimchi ? "spicy kimchi stew" : (isSoy ? "soybean paste stew" : "healthy home-cooked dinner");
+        const dishPron = isKimchi ? "스파이시 김치 스튜" : (isSoy ? "소이빈 페이스트 스튜" : "헬씨 홈 쿡트 디너");
+        const dishKo = isKimchi ? "얼큰한 김치찌개" : (isSoy ? "구수한 된장찌개" : "건강한 집밥");
 
         return {
           praise_ko: randomPraise,
-          better_en: "I'm thinking of cooking a healthy meal for my family.",
-          better_pronunciation: "아임 띵킹 오브 쿠킹 어 헬씨 밀 포 마이 패밀리.",
-          better_ko: "우리 가족을 위해 건강한 저녁 식사를 차릴까 생각 중이에요.",
-          reply_en: "You are such a wonderful cook! Your family is so lucky. Should we have coffee together tomorrow morning?",
-          reply_ko: "역시 요리 솜씨가 최고시네요! 가족분들이 정말 행복하겠어요. 내일 아침엔 같이 커피 한잔할까요?",
-          diary_en: "Today, I had a warm conversation with Jenny about my family's dinner!",
-          diary_pron: "투데이, 아이 해드 어 웜 컨버세이션 위드 제니 어바웃 마이 패밀리즈 디너!",
-          diary_ko: "오늘 제니와 우리 가족의 저녁 식사에 대해 따뜻한 영어 수다를 나눴다!",
+          better_en: `I'm thinking of making ${dishEn} tonight.`,
+          better_pronunciation: `아임 띵킹 오브 메이킹 ${dishPron} 투나잇.`,
+          better_ko: `오늘 저녁엔 ${dishKo}를 끓일까 생각 중이에요.`,
+          reply_en: `Wow, ${dishEn} sounds so delicious! Does your family love it too?`,
+          reply_ko: `우와, ${dishKo}라니 정말 맛있겠어요! 가족분들도 다 좋아하시나요?`,
+          diary_en: `Today, I told Jenny that I'm thinking of making ${dishEn}!`,
+          diary_pron: `투데이, 아이 톨드 제니 댓 아임 띵킹 오브 메이킹 ${dishPron}!`,
+          diary_ko: `오늘 저녁으로 ${dishKo}를 할 거라고 제니와 수다를 떨었다!`,
           hints: [
-            { en: "Sounds great! Let's have coffee tomorrow.", pron: "사운즈 그레이트! 렛츠 해브 커피 투모로우.", ko: "너무 좋아요! 내일 같이 커피 마셔요." },
-            { en: "I'm thinking of baking bread tomorrow.", pron: "아임 띵킹 오브 베이킹 브레드 투모로우.", ko: "내일은 빵을 구워볼까 생각 중이에요." },
-            { en: "Thank you, Jenny! Have a cozy evening.", pron: "땡큐, 제니! 해브 어 코지 이브닝.", ko: "고마워요 제니! 편안한 저녁 보내세요." }
+            { en: "Yes! My family really loves it.", pron: "예스! 마이 패밀리 리얼리 러브즈 잇.", ko: "네! 우리 가족이 정말 좋아하는 메뉴예요." },
+            { en: "I'm thinking of going to the mart now.", pron: "아임 띵킹 오브 고잉 투 더 마트 나우.", ko: "이제 장 보러 마트에 갈까 생각 중이에요." },
+            { en: "Come over and eat dinner with us!", pron: "컴 오버 앤 잇 디너 위드 어스!", ko: "제니 씨도 우리 집에 와서 같이 먹어요!" }
           ]
         };
       }
 
-      // Scenario 2: Family Travel Hotel
       if (scenario.id === 2) {
-        const matched = hotelMap.find(item => item.kw.some(k => t.includes(k))) || hotelMap[0];
         return {
           praise_ko: randomPraise,
-          better_en: `Could we have ${matched.en}, please?`,
-          better_pronunciation: `쿠드 위 해브 ${matched.pron}, 플리즈?`,
-          better_ko: `저희 ${matched.ko} 좀 더 받을 수 있을까요?`,
-          reply_en: `Of course! We will bring ${matched.en} to your room right away. Do you need anything else?`,
-          reply_ko: `물론이죠! 지금 바로 객실로 ${matched.ko}를 가져다 드릴게요. 혹시 더 필요한 건 없으신가요?`,
-          diary_en: `Today, I politely asked the hotel staff for ${matched.en} in English!`,
-          diary_pron: `투데이, 아이 폴라이틀리 애스크드 더 호텔 스태프 포 ${matched.pron} 인 잉글리시!`,
-          diary_ko: `오늘 호텔 직원에게 영어로 자연스럽게 ${matched.ko}를 요청했다!`,
+          better_en: "Could we have two more clean towels, please?",
+          better_pronunciation: "쿠드 위 해브 투 모어 클린 타월즈, 플리즈?",
+          better_ko: "깨끗한 수건 두 장만 더 받을 수 있을까요?",
+          reply_en: "Of course! We will bring fresh towels to your room right away. Anything else?",
+          reply_ko: "물론이죠! 지금 객실로 깨끗한 수건을 가져다 드릴게요. 더 필요한 건 없으신가요?",
+          diary_en: "Today, I asked the hotel front desk for towels in English!",
+          diary_pron: "투데이, 아이 애스크드 더 호텔 프론트 데스크 포 타월즈 인 잉글리시!",
+          diary_ko: "오늘 호텔 프런트에 영어로 수건을 더 달라고 당당히 말했다!",
           hints: [
-            { en: "Could we have breakfast tickets for tomorrow?", pron: "쿠드 위 해브 브렉퍼스트 티켓츠 포 투모로우?", ko: "내일 아침 조식 쿠폰도 받을 수 있을까요?" },
-            { en: "That's all for now. Thank you so much!", pron: "댓츠 올 포 나우. 땡큐 쏘 머치!", ko: "지금은 그게 전부예요. 정말 감사합니다!" },
-            { en: "What time does the swimming pool open?", pron: "왓 타임 더즈 더 스위밍 풀 오픈?", ko: "수영장은 몇 시에 문을 여나요?" }
+            { en: "Could we have more bottles of water?", pron: "쿠드 위 해브 모어 바틀즈 오브 워터?", ko: "생수도 조금 더 받을 수 있을까요?" },
+            { en: "That's all. Thank you so much!", pron: "댓츠 올. 땡큐 쏘 머치!", ko: "그게 다예요. 정말 감사합니다!" },
+            { en: "What time is breakfast tomorrow?", pron: "왓 타임 이즈 브렉퍼스트 투모로우?", ko: "내일 아침 조식은 몇 시인가요?" }
           ]
         };
       }
 
-      // Scenario 3: Tea Time Drama Talk
       return {
         praise_ko: randomPraise,
-        better_en: "I really enjoyed watching a romantic Korean drama lately!",
-        better_pronunciation: "아이 리얼리 인조이드 워칭 어 로맨틱 코리안 드라마 레이틀리!",
-        better_ko: "요즘 로맨틱한 한국 드라마를 정말 재미있게 봤어요!",
-        reply_en: "Oh, I love Korean dramas too! The stories are always so touching. Who is your favorite actor?",
-        reply_ko: "어머, 저도 한국 드라마 정말 좋아해요! 스토리가 늘 감동적이더라고요. 가장 좋아하는 배우가 누구예요?",
-        diary_en: "Today, I really enjoyed talking about Korean dramas over warm tea with Jenny!",
-        diary_pron: "투데이, 아이 리얼리 인조이드 토킹 어바웃 코리안 드라마즈 오버 웜 티 위드 제니!",
-        diary_ko: "오늘 제니와 따뜻한 차를 마시며 드라마 수다를 정말 즐겁게 떨었다!",
+        better_en: "I really enjoyed watching a Korean drama lately!",
+        better_pronunciation: "아이 리얼리 인조이드 워칭 어 코리안 드라마 레이틀리!",
+        better_ko: "요즘 한국 드라마를 정말 재미있게 봤어요!",
+        reply_en: "I love Korean dramas too! The actors are so amazing. Who is your favorite actor?",
+        reply_ko: "저도 한국 드라마 정말 좋아해요! 배우들의 연기가 멋지더라고요. 가장 좋아하는 배우가 누구예요?",
+        diary_en: "Today, I enjoyed talking about dramas with Jenny!",
+        diary_pron: "투데이, 아이 인조이드 토킹 어바웃 드라마즈 위드 제니!",
+        diary_ko: "오늘 제니와 좋아하는 드라마 이야기를 즐겁게 나눴다!",
         hints: [
-          { en: "I really enjoyed the main actress's style!", pron: "아이 리얼리 인조이드 더 메인 액트리스즈 스타일!", ko: "여주인공의 옷차림과 스타일이 정말 좋았어요!" },
-          { en: "I really enjoyed the heartwarming family story.", pron: "아이 리얼리 인조이드 더 하트워밍 패밀리 스토리.", ko: "마음이 따뜻해지는 가족 이야기를 정말 재밌게 봤어요." },
+          { en: "I really enjoyed the lead actor's style!", pron: "아이 리얼리 인조이드 더 리드 액터즈 스타일!", ko: "주인공의 멋진 스타일을 정말 재밌게 봤어요!" },
+          { en: "I really enjoyed the heartwarming family story.", pron: "아이 리얼리 인조이드 더 하트워밍 패밀리 스토리.", ko: "마음이 따뜻해지는 가족 이야기를 재밌게 봤어요." },
           { en: "Let's watch the next episode together!", pron: "렛츠 워치 더 넥스트 에피소드 투게더!", ko: "다음 화는 우리 같이 봐요!" }
         ]
       };
     }
 
-    // ==================== SPEECH SYNTHESIS (TTS) & HANDS-FREE ====================
-    function toggleSpeechSpeed() {
-      isSlowMode = !isSlowMode;
-      speechSpeed = isSlowMode ? 0.82 : 1.0;
-      document.getElementById("speedEmoji").textContent = isSlowMode ? "🐢" : "🐇";
-      document.getElementById("speedLabel").textContent = isSlowMode
-        ? "천천히 (0.8x)"
-        : "보통 (1.0x)";
-
-      showToast(isSlowMode ? "🐢" : "🐇", isSlowMode ? "왕초보 맞춤형 천천히 듣기(0.8배속)로 설정되었어요!" : "원어민 보통 속도(1.0배속)로 설정되었어요!");
-    }
-
-    function toggleHandsFree() {
-      isHandsFree = !isHandsFree;
-      const btn = document.getElementById("handsFreeBtn");
-      const label = document.getElementById("handsFreeLabel");
-      const banner = document.getElementById("handsFreeBanner");
-
-      if (isHandsFree) {
-        btn.className = "flex-1 flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-sage-600 text-white font-extrabold text-xs sm:text-sm shadow-sm active:scale-95 transition";
-        label.textContent = "설거지모드 ON";
-        banner.classList.remove("hidden");
-        showToast("🧤", "설거지 핸즈프리 모드가 켜졌어요! 제니가 추천 대답까지 읽어드려요.");
-      } else {
-        btn.className = "flex-1 flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-transparent text-cocoa-700 font-bold text-xs sm:text-sm hover:bg-white/60 active:scale-95 transition";
-        label.textContent = "설거지모드 OFF";
-        banner.classList.add("hidden");
-      }
-    }
-
-    function speakCurrentPattern() {
+    // ==================== NOTEBOOK & FINISH MODAL ====================
+    function saveToNotebook(en, pron, ko) {
       const sc = SCENARIOS[currentStepIndex];
-      speakText(sc.patternEn.replace("~", ""));
-    }
-
-    let currentFallbackAudio = null;
-
-    // High-quality Cloud Audio TTS fallback (Works 100% in KakaoTalk, Safari, Chrome, WebViews)
-    function playAudioFallback(text, customRate) {
-      try {
-        if (currentFallbackAudio) {
-          currentFallbackAudio.pause();
-          currentFallbackAudio = null;
-        }
-
-        const cleanText = text.replace(/[~*#_]/g, '').trim();
-        if (!cleanText) return;
-
-        const indicator = document.getElementById("speakingIndicator");
-        if (indicator) {
-          indicator.classList.remove("hidden");
-          indicator.classList.add("inline-flex");
-        }
-
-        const encoded = encodeURIComponent(cleanText);
-        // Use first-party /api/tts proxy when hosted on Render / Node server, which avoids third-party Referer blocks completely!
-        const isHostedOnServer = window.location.protocol.startsWith('http');
-        const audioUrl = isHostedOnServer
-          ? `/api/tts?q=${encoded}`
-          : `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encoded}`;
-
-        currentFallbackAudio = new Audio(audioUrl);
-        currentFallbackAudio.referrerPolicy = "no-referrer";
-        currentFallbackAudio.playbackRate = customRate || speechSpeed || 0.82;
-
-        currentFallbackAudio.onended = () => {
-          if (indicator) {
-            indicator.classList.add("hidden");
-            indicator.classList.remove("inline-flex");
-          }
-        };
-
-        currentFallbackAudio.onerror = () => {
-          // If first try failed, try direct Google TTS with no-referrer
-          if (audioUrl.startsWith('/api/tts')) {
-            const directUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encoded}`;
-            currentFallbackAudio = new Audio(directUrl);
-            currentFallbackAudio.referrerPolicy = "no-referrer";
-            currentFallbackAudio.playbackRate = customRate || speechSpeed || 0.82;
-            currentFallbackAudio.play().catch(() => {});
-            currentFallbackAudio.onended = () => {
-              if (indicator) {
-                indicator.classList.add("hidden");
-                indicator.classList.remove("inline-flex");
-              }
-            };
-          } else {
-            if (indicator) {
-              indicator.classList.add("hidden");
-              indicator.classList.remove("inline-flex");
-            }
-          }
-        };
-
-        const playPromise = currentFallbackAudio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((err) => {
-            console.warn("Audio playback blocked, trying fallback:", err);
-            if (indicator) {
-              indicator.classList.add("hidden");
-              indicator.classList.remove("inline-flex");
-            }
-          });
-        }
-      } catch (e) {
-        console.error("Audio fallback error:", e);
-      }
-    }
-
-    // Unified speak function: Tries Web Speech API first, seamlessly falls back to Cloud Audio
-    function speakText(text, customRate) {
-      const cleanText = text.replace(/[~*#_]/g, '').trim();
-      if (!cleanText) return;
-
-      const rate = customRate || speechSpeed || 0.82;
-      const indicator = document.getElementById("speakingIndicator");
-
-      // In KakaoTalk, Naver, Instagram in-app browsers, SpeechSynthesis is notoriously crippled or silent on Android.
-      // Use high-performance Cloud Audio directly in in-app browsers for 100% sound reliability!
-      const isInAppBrowser = /KAKAOTALK|NAVER|Instagram|FB_IAB|Line/i.test(navigator.userAgent);
-      if (isInAppBrowser) {
-        playAudioFallback(cleanText, rate);
-        return;
-      }
-
-      // Check if Web Speech API is natively available
-      const hasSpeechSynth = typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis;
-
-      if (hasSpeechSynth) {
-        try {
-          window.speechSynthesis.cancel();
-          const utter = new SpeechSynthesisUtterance(cleanText);
-          utter.lang = "en-US";
-          utter.rate = rate;
-          utter.pitch = 1.05;
-
-          const voices = window.speechSynthesis.getVoices();
-          const preferredVoice = voices.find(v =>
-            v.lang && v.lang.startsWith("en") && (v.name.includes("Samantha") || v.name.includes("Google US English") || v.name.includes("Zira") || v.name.includes("Natural"))
-          ) || voices.find(v => v.lang && v.lang.startsWith("en-US"));
-
-          if (preferredVoice) utter.voice = preferredVoice;
-
-          let hasStarted = false;
-          utter.onstart = () => {
-            hasStarted = true;
-            if (indicator) {
-              indicator.classList.remove("hidden");
-              indicator.classList.add("inline-flex");
-            }
-          };
-          utter.onend = () => {
-            if (indicator) {
-              indicator.classList.add("hidden");
-              indicator.classList.remove("inline-flex");
-            }
-          };
-          utter.onerror = () => {
-            if (indicator) {
-              indicator.classList.add("hidden");
-              indicator.classList.remove("inline-flex");
-            }
-            // Fallback to Cloud Audio
-            playAudioFallback(cleanText, rate);
-          };
-
-          window.speechSynthesis.speak(utter);
-
-          // In some in-app mobile browsers (KakaoTalk, Instagram), speak() fails silently without firing onstart
-          setTimeout(() => {
-            if (!hasStarted && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
-              playAudioFallback(cleanText, rate);
-            }
-          }, 350);
-          return;
-        } catch (e) {
-          console.warn("SpeechSynthesis error, falling back to audio:", e);
-        }
-      }
-
-      // Fallback to Cloud Audio if SpeechSynthesis is unavailable
-      playAudioFallback(cleanText, rate);
-    }
-
-    function speakHandsFreeSequence(aiResult) {
-      if (currentFallbackAudio) {
-        currentFallbackAudio.pause();
-        currentFallbackAudio = null;
-      }
-
-      const hasSpeechSynth = typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis;
-      if (hasSpeechSynth) {
-        try {
-          window.speechSynthesis.cancel();
-          const u1 = new SpeechSynthesisUtterance(aiResult.better_en);
-          u1.lang = "en-US";
-          u1.rate = speechSpeed;
-
-          const u2 = new SpeechSynthesisUtterance(aiResult.reply_en);
-          u2.lang = "en-US";
-          u2.rate = speechSpeed;
-
-          const firstHint = aiResult.hints && aiResult.hints[0] ? aiResult.hints[0].en : "";
-          const u3 = new SpeechSynthesisUtterance(firstHint ? `Try saying: ${firstHint}` : "");
-          u3.lang = "en-US";
-          u3.rate = 0.8;
-
-          const indicator = document.getElementById("speakingIndicator");
-          u1.onstart = () => {
-            if (indicator) {
-              indicator.classList.remove("hidden");
-              indicator.classList.add("inline-flex");
-            }
-          };
-          u3.onend = () => {
-            if (indicator) {
-              indicator.classList.add("hidden");
-              indicator.classList.remove("inline-flex");
-            }
-          };
-
-          window.speechSynthesis.speak(u1);
-          window.speechSynthesis.speak(u2);
-          if (firstHint) window.speechSynthesis.speak(u3);
-          return;
-        } catch (e) {}
-      }
-
-      // Hands-free fallback
-      playAudioFallback(aiResult.reply_en, speechSpeed);
-    }
-
-    // ==================== SPEECH RECOGNITION (STT) MODAL ====================
-    function initSpeechRecognition() {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) return;
-
-      recognition = new SpeechRec();
-      recognition.lang = "en-US";
-      recognition.interimResults = true;
-      recognition.continuous = false;
-
-      recognition.onstart = () => {
-        isStartingRecognition = false;
-        isRecording = true;
-        const statusEl = document.getElementById("voiceStatusText");
-        if (statusEl) {
-          statusEl.textContent = "귀 기울여 듣고 있어요! 편하게 말씀해 주세요 👂";
-        }
-      };
-
-      recognition.onresult = (event) => {
-        let transcript = "";
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        if (transcript) {
-          document.getElementById("liveTranscriptText").textContent = transcript;
-        }
-      };
-
-      recognition.onerror = () => {
-        isStartingRecognition = false;
-        isRecording = false;
-        const statusEl = document.getElementById("voiceStatusText");
-        if (statusEl) {
-          statusEl.textContent = "마이크 사용이 어렵다면 아래 예시 문장 버튼을 눌러보세요 👇";
-        }
-      };
-
-      recognition.onend = () => {
-        isStartingRecognition = false;
-        isRecording = false;
-      };
-    }
-
-    function safeStartRecognition() {
-      if (!recognition || isRecording || isStartingRecognition) return;
-      isStartingRecognition = true;
-      try {
-        const startResult = recognition.start();
-        if (startResult && typeof startResult.catch === "function") {
-          startResult.catch(() => {
-            isStartingRecognition = false;
-            isRecording = false;
-          });
-        }
-      } catch (e) {
-        isStartingRecognition = false;
-      }
-    }
-
-    function safeStopRecognition() {
-      if (!recognition) return;
-      isStartingRecognition = false;
-      if (!isRecording) return;
-      isRecording = false;
-      try {
-        const stopResult = recognition.stop();
-        if (stopResult && typeof stopResult.catch === "function") {
-          stopResult.catch(() => {});
-        }
-      } catch (e) {}
-    }
-
-    function openVoiceModal() {
-      const sc = SCENARIOS[currentStepIndex];
-      const state = scenarioState[currentStepIndex];
-      const topHint = state.currentHints[0] || sc.initialHints[0];
-
-      document.getElementById("voiceModalPatternEn").textContent = topHint.en;
-      document.getElementById("voiceModalPatternPron").textContent = `🗣️ [ ${topHint.pron} ]`;
-      document.getElementById("liveTranscriptText").textContent = topHint.en;
-
-      // Populate Quick Voice Samples
-      const samplesContainer = document.getElementById("voiceQuickSamples");
-      const sampleItems = [
-        { label: `🇰🇷+🇺🇸 반반 영어: "${sc.konglishSample}"`, val: sc.konglishSample },
-        ...state.currentHints.slice(0, 2).map(h => ({
-          label: `🇺🇸 "${h.en}" (${h.ko})`,
-          val: h.en
-        }))
-      ];
-
-      samplesContainer.innerHTML = sampleItems.map(item => `
-        <button
-          onclick="selectVoiceSample('${escapeQuotes(item.val)}')"
-          class="w-full text-left bg-white hover:bg-coral-50 active:scale-[0.99] border border-cream-300 px-3 py-2 rounded-xl text-sm font-extrabold text-cocoa-800 transition flex items-center justify-between"
-        >
-          <span class="truncate pr-2">${escapeHtml(item.label)}</span>
-          <span class="text-xs text-coral-600 shrink-0 font-black">선택 👆</span>
-        </button>
-      `).join("");
-
-      document.getElementById("voiceModal").classList.remove("hidden");
-      safeStartRecognition();
-    }
-
-    function toggleSpeechRecognition() {
-      if (!recognition) {
-        showToast("🎤", "아래 예시 문장 버튼을 누르면 바로 음성처럼 전송할 수 있어요!");
-        return;
-      }
-      if (isRecording || isStartingRecognition) {
-        safeStopRecognition();
-        document.getElementById("voiceStatusText").textContent = "마이크가 일시 중지되었어요. 다시 누르면 켜집니다 🎤";
-      } else {
-        safeStartRecognition();
-      }
-    }
-
-    function selectVoiceSample(val) {
-      document.getElementById("liveTranscriptText").textContent = val;
-      submitVoiceTranscript();
-    }
-
-    function submitVoiceTranscript() {
-      const text = document.getElementById("liveTranscriptText").textContent.trim();
-      closeVoiceModal();
-      if (text && text !== "...듣고 있어요...") {
-        document.getElementById("userInput").value = text;
-        handleSendMessage();
-      }
-    }
-
-    function closeVoiceModal() {
-      safeStopRecognition();
-      document.getElementById("voiceModal").classList.add("hidden");
-    }
-
-    // ==================== REVIEW NOTEBOOK (복습노트) ====================
-    function saveToNotebook(en, pron, ko, msgIdx) {
-      const sc = SCENARIOS[currentStepIndex];
-      const existingIndex = savedNotebook.findIndex(item => item.en === en);
-
-      if (existingIndex >= 0) {
+      if (savedNotebook.some(item => item.en === en)) {
         showToast("📒", "이미 복습노트에 저장된 표현이에요!");
         return;
       }
-
-      savedNotebook.unshift({
-        en,
-        pron,
-        ko,
-        stepTitle: `${sc.stepLabel} (${sc.shortTitle})`
-      });
-
+      savedNotebook.unshift({ en, pron, ko, stepTitle: `${sc.stepLabel} (${sc.shortTitle})` });
       updateNotebookBadge();
       renderChatMessages();
-      showToast("⭐", "내 복습노트에 소중히 저장되었어요!");
+      showToast("⭐", "내 복습노트에 저장되었어요!");
     }
 
     function updateNotebookBadge() {
@@ -2183,32 +1238,23 @@ ${recentHistory}
     function openNotebookModal() {
       const listEl = document.getElementById("notebookList");
       if (savedNotebook.length === 0) {
-        listEl.innerHTML = `
-          <div class="text-center py-8 text-cocoa-600 font-bold">
-            아직 저장된 문장이 없어요. 대화 중 [⭐ 복습노트 저장]을 눌러보세요!
-          </div>
-        `;
+        listEl.innerHTML = `<div class="text-center py-6 text-cocoa-600 font-bold text-xs">저장된 문장이 없어요. 대화 중 [⭐ 복습노트 저장]을 눌러보세요!</div>`;
       } else {
-        listEl.innerHTML = savedNotebook.map((item, idx) => {
-          const safeEn = escapeQuotes(item.en);
-          return `
-            <div class="bg-white rounded-2xl p-4 border-2 border-cream-200 shadow-sm">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-extrabold text-sage-700 bg-sage-50 px-2.5 py-0.5 rounded-full border border-sage-200">
-                  ${escapeHtml(item.stepTitle)}
-                </span>
-                <button onclick="removeNotebookItem(${idx})" class="text-xs font-bold text-cocoa-600 hover:text-coral-600">삭제</button>
-              </div>
-              <p class="font-en text-lg font-black text-cocoa-900 mt-1">"${escapeHtml(item.en)}"</p>
-              <p class="text-base font-extrabold text-coral-600 mt-1">🗣️ [${escapeHtml(item.pron)}]</p>
-              <p class="text-sm font-bold text-cocoa-600 mt-0.5">${escapeHtml(item.ko)}</p>
-              <button onclick="speakText('${safeEn}')" class="mt-2.5 w-full bg-coral-50 hover:bg-coral-100 text-coral-600 font-extrabold text-sm py-2 rounded-xl flex items-center justify-center gap-1.5 transition">
-                <i class="ph-fill ph-speaker-high text-lg"></i>
-                <span>원어민 발음 듣고 따라 읽기</span>
-              </button>
+        listEl.innerHTML = savedNotebook.map((item, idx) => `
+          <div class="bg-white rounded-2xl p-3 border border-cream-200 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-black text-sage-700 bg-sage-50 px-2 py-0.5 rounded-full">${escapeHtml(item.stepTitle)}</span>
+              <button onclick="removeNotebookItem(${idx})" class="text-[11px] font-bold text-cocoa-600 hover:text-coral-600">삭제</button>
             </div>
-          `;
-        }).join("");
+            <p class="font-en text-sm font-black text-cocoa-900">"${escapeHtml(item.en)}"</p>
+            <p class="text-xs font-bold text-coral-600">[${escapeHtml(item.pron)}]</p>
+            <p class="text-xs text-cocoa-600">${escapeHtml(item.ko)}</p>
+            <button onclick="speakText('${escapeQuotes(item.en)}')" class="mt-2 w-full bg-coral-50 text-coral-600 font-black text-xs py-1.5 rounded-xl flex items-center justify-center gap-1">
+              <i class="ph-fill ph-speaker-high text-sm"></i>
+              <span>발음 듣기</span>
+            </button>
+          </div>
+        `).join("");
       }
       document.getElementById("notebookModal").classList.remove("hidden");
     }
@@ -2224,70 +1270,35 @@ ${recentHistory}
       document.getElementById("notebookModal").classList.add("hidden");
     }
 
-    // ==================== 3-TURN FINISH & PASSPORT STAMP MODAL ====================
     function openFinishModal() {
-      const sc = SCENARIOS[currentStepIndex];
       const state = scenarioState[currentStepIndex];
-
       if (!state.stamped) {
         state.stamped = true;
         renderScenarioTabs();
         updateHeaderStamps();
       }
 
-      playCelebrationChime();
-
-      // Render 4 Passport Stamps
       const stampGrid = document.getElementById("stampGrid");
       stampGrid.innerHTML = SCENARIOS.map((s, idx) => {
         const earned = scenarioState[idx].stamped;
-        const isCurrent = idx === currentStepIndex;
         return `
-          <div class="flex flex-col items-center justify-center p-2.5 rounded-2xl border-2 ${
-            earned
-              ? 'bg-coral-50 border-coral-300 text-coral-600'
-              : 'bg-cream-100 border-dashed border-cream-300 text-cocoa-600 opacity-60'
+          <div class="flex flex-col items-center justify-center p-2 rounded-2xl border ${
+            earned ? 'bg-coral-50 border-coral-300 text-coral-600' : 'bg-cream-100 border-dashed border-cream-300 text-cocoa-600 opacity-60'
           }">
-            <div class="w-12 h-12 rounded-full ${
-              earned ? 'bg-white border-2 border-coral-400 shadow-sm' : 'bg-cream-200'
-            } flex items-center justify-center text-2xl ${isCurrent && earned ? 'animate-stamp' : ''}">
+            <div class="w-10 h-10 rounded-full ${earned ? 'bg-white border-2 border-coral-400' : 'bg-cream-200'} flex items-center justify-center text-xl">
               ${earned ? s.stampEmoji : '🔒'}
             </div>
-            <span class="text-xs font-black mt-1.5 text-center leading-tight">${s.stampName}</span>
-            <span class="text-[10px] font-extrabold mt-0.5">${earned ? '도장 완료!' : '미션 전'}</span>
+            <span class="text-[10px] font-black mt-1 text-center">${s.stampName}</span>
           </div>
         `;
       }).join("");
 
-      // Populate Today's Diary Card
       const today = new Date();
-      document.getElementById("diaryDateText").textContent = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 · 오늘의 영어 일기`;
+      document.getElementById("diaryDateText").textContent = `${today.getMonth() + 1}월 ${today.getDate()}일의 영어 일기`;
       document.getElementById("diaryEmoji").textContent = state.diary.emoji;
       document.getElementById("diaryEnText").textContent = `"${state.diary.en}"`;
       document.getElementById("diaryPronText").textContent = `🗣️ [ ${state.diary.pron} ]`;
       document.getElementById("diaryKoText").textContent = state.diary.ko;
-
-      // Populate Spoken List
-      const spokenListEl = document.getElementById("todaySpokenList");
-      const listToShow = state.spokenSentences.length > 0
-        ? state.spokenSentences
-        : state.currentHints.slice(0, 2);
-
-      spokenListEl.innerHTML = listToShow.map(item => {
-        const safeEn = escapeQuotes(item.en);
-        return `
-          <div class="flex items-center justify-between gap-2 bg-cream-50 p-3 rounded-xl border border-cream-200">
-            <div class="flex-1">
-              <p class="font-en text-base font-black text-cocoa-900">${escapeHtml(item.en)}</p>
-              <p class="text-xs font-extrabold text-coral-600 mt-0.5">[${escapeHtml(item.pron)}]</p>
-            </div>
-            <button onclick="speakText('${safeEn}')" class="shrink-0 bg-white hover:bg-coral-50 text-coral-600 border border-coral-200 px-3 py-2 rounded-xl font-extrabold text-xs flex items-center gap-1 shadow-sm">
-              <i class="ph-fill ph-speaker-high text-base"></i>
-              <span>듣기</span>
-            </button>
-          </div>
-        `;
-      }).join("");
 
       document.getElementById("finishModal").classList.remove("hidden");
     }
@@ -2296,237 +1307,115 @@ ${recentHistory}
       document.getElementById("finishModal").classList.add("hidden");
     }
 
-    function speakDiary() {
-      const state = scenarioState[currentStepIndex];
-      speakText(state.diary.en);
-    }
-
     function copyDiaryCard() {
       const state = scenarioState[currentStepIndex];
-      const shareText = `☕ [옆집 제니와 5분 영어 수다]\n오늘의 영어 한 줄 일기 🌺\n\n"${state.diary.en}"\n(${state.diary.ko})\n\n오늘도 영어 수다 미션 성공! 🎉`;
-      copyTextToClipboard(shareText);
-      showToast("📋", "오늘의 영어 일기가 복사되었어요! 카카오톡에 붙여넣어 자랑해 보세요 😊");
+      const text = `☕ [옆집 제니와 5분 영어 수다]\n오늘의 영어 일기 🌺\n\n"${state.diary.en}"\n(${state.diary.ko})\n\n오늘도 영어 미션 성공! 🎉`;
+      copyText(text);
+      showToast("📋", "일기가 복사되었어요! 카톡에 붙여넣어 보세요.");
     }
 
-    // ==================== MOBILE APP SHARE & INSTALL FUNCTIONS ====================
-    function getShareableUrl() {
-      const inputEl = document.getElementById("shareUrlInput");
-      if (inputEl && inputEl.value.trim()) {
-        return inputEl.value.trim();
-      }
-      return window.location.href;
-    }
-
-    function openShareModal(defaultTab = "share") {
-      const sc = SCENARIOS[currentStepIndex];
-      const urlInput = document.getElementById("shareUrlInput");
-      if (urlInput && !urlInput.value) {
-        urlInput.value = window.location.href;
-      }
-
-      const previewEl = document.getElementById("invitePreviewText");
-      if (previewEl) {
-        previewEl.textContent = `☕ [옆집 제니와 5분 영어 수다]\n오늘 배운 표현: "${sc.patternEn}" (${sc.patternKo})\n모르는 단어는 한국어로 섞어 말해도 옆집 친구 제니가 다정하게 알려줘요! 우리 하루 5분씩 같이 영어 수다 떨어요 🌺`;
-      }
-
+    // ==================== SHARE & SETTINGS ====================
+    function openShareModal() {
       document.getElementById("shareAppModal").classList.remove("hidden");
-      switchShareTab(defaultTab);
     }
-
     function closeShareModal() {
       document.getElementById("shareAppModal").classList.add("hidden");
     }
 
-    function switchShareTab(tabName) {
-      const tabs = ["share", "qr", "install"];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`shareTabBtn_${t}`);
-        const content = document.getElementById(`shareTabContent_${t}`);
-        if (t === tabName) {
-          btn.className = "py-2 px-2 rounded-xl font-black text-xs sm:text-sm bg-coral-500 text-white shadow-sm transition";
-          content.classList.remove("hidden");
-        } else {
-          btn.className = "py-2 px-2 rounded-xl font-black text-xs sm:text-sm text-cocoa-700 hover:bg-white/60 transition";
-          content.classList.add("hidden");
-        }
-      });
-
-      if (tabName === "qr") {
-        renderAppQrCode(getShareableUrl());
-      }
-    }
-
     async function triggerNativeShare() {
-      const sc = SCENARIOS[currentStepIndex];
-      const shareUrl = getShareableUrl();
-      const shareData = {
+      const shareUrl = window.location.href;
+      const data = {
         title: "☕ 옆집 제니와 5분 영어 수다",
-        text: `모르는 단어는 한국어로 말해도 제니가 찰떡같이 알아듣는 5분 영어 회화 앱이에요! 오늘의 표현: "${sc.patternEn}" (${sc.patternKo}) 함께 해봐요 🌺`,
-        url: shareUrl.startsWith("http") ? shareUrl : undefined
+        text: "모르는 단어는 한국어로 말해도 되는 5분 영어 회화 앱이에요! 함께 해봐요 🌺",
+        url: shareUrl
       };
-
       if (navigator.share) {
         try {
-          await navigator.share(shareData);
-          showToast("🎉", "공유 창이 열렸어요! 친구에게 보내보세요.");
+          await navigator.share(data);
           return;
-        } catch (err) {
-          if (err && err.name === "AbortError") return;
-        }
+        } catch(e){}
       }
-      copyAppInvite("invite");
+      copyAppInvite();
     }
 
-    function copyAppInvite(mode) {
-      const sc = SCENARIOS[currentStepIndex];
-      const shareUrl = getShareableUrl();
-      const inviteMessage = `☕ [옆집 제니와 5분 영어 수다]\n\n"틀리면 어떡하지?" 걱정 마세요! 😊\n모르는 단어는 한국어로 섞어 말해도 옆집 친구 제니가 다정하게 원어민 표현으로 바꿔줘요.\n\n✨ 오늘의 1분 패턴: ${sc.patternEn} (${sc.patternKo})\n🗣️ 발음: [${sc.patternPron}]\n\n👇 아래 주소로 들어와서 하루 5분 같이 영어 수다 떨어요!\n${shareUrl}`;
-
-      copyTextToClipboard(inviteMessage);
-      showToast("💌", "초대 문구와 앱 주소가 복사되었어요! 카카오톡 단톡방에 붙여넣기 하세요.");
+    function copyAppInvite() {
+      const shareUrl = window.location.href;
+      const text = `☕ [옆집 제니와 5분 영어 수다]\n모르는 단어는 한국어로 섞어 말해도 옆집 친구 제니가 다정하게 원어민 표현으로 알려줘요!\n\n👇 아래 링크로 들어와서 같이 영어 수다 떨어요!\n${shareUrl}`;
+      copyText(text);
+      showToast("💌", "초대 문구와 주소가 복사되었어요!");
     }
 
-    function copyShareUrlOnly() {
-      const shareUrl = getShareableUrl();
-      copyTextToClipboard(shareUrl);
-      showToast("🔗", "앱 주소가 복사되었어요!");
+    function openSettingsModal() {
+      document.getElementById("apiKeyInput").value = apiKey;
+      document.getElementById("settingsModal").classList.remove("hidden");
+    }
+    function closeSettingsModal() {
+      document.getElementById("settingsModal").classList.add("hidden");
+    }
+    function saveApiKey() {
+      apiKey = document.getElementById("apiKeyInput").value.trim();
+      localStorage.setItem("jenny_gemini_api_key", apiKey);
+      updateAiStatusUI();
+      showToast("🔑", apiKey ? "API 키가 저장되었어요!" : "기본 모드로 설정되었어요.");
+      closeSettingsModal();
+    }
+    function clearApiKey() {
+      apiKey = "";
+      localStorage.removeItem("jenny_gemini_api_key");
+      document.getElementById("apiKeyInput").value = "";
+      updateAiStatusUI();
+      showToast("🔄", "초기화되었어요.");
+    }
+    function updateAiStatusUI() {
+      const dot = document.getElementById("aiStatusDot");
+      if (dot) {
+        dot.className = apiKey
+          ? "absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 border-2 border-white rounded-full"
+          : "absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full";
+      }
     }
 
-    function copyTextToClipboard(text) {
+    // ==================== UTILS ====================
+    function copyText(str) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+        navigator.clipboard.writeText(str).catch(() => fallbackCopy(str));
       } else {
-        fallbackCopy(text);
+        fallbackCopy(str);
       }
     }
 
-    function fallbackCopy(text) {
-      const tempInput = document.createElement("textarea");
-      tempInput.value = text;
-      document.body.appendChild(tempInput);
-      tempInput.select();
+    function fallbackCopy(str) {
+      const el = document.createElement("textarea");
+      el.value = str;
+      document.body.appendChild(el);
+      el.select();
       document.execCommand("copy");
-      document.body.removeChild(tempInput);
+      document.body.removeChild(el);
     }
 
-    function renderAppQrCode(urlText) {
-      const container = document.getElementById("qrCodeContainer");
-      if (!container) return;
-      container.innerHTML = "";
-
-      const validUrl = (urlText && urlText.trim()) ? urlText.trim() : window.location.href;
-
-      if (typeof QRCode !== "undefined") {
-        try {
-          new QRCode(container, {
-            text: validUrl.slice(0, 220),
-            width: 170,
-            height: 170,
-            colorDark: "#291F1A",
-            colorLight: "#FFFFFF",
-            correctLevel: QRCode.CorrectLevel.M
-          });
-          return;
-        } catch (e) {}
-      }
-
-      container.innerHTML = `
-        <div class="flex flex-col items-center justify-center p-4 text-center">
-          <i class="ph-duotone ph-qr-code text-6xl text-coral-500"></i>
-          <p class="text-xs font-bold text-cocoa-700 mt-2">아래 [주소 복사]를 눌러 카톡으로 보내보세요!</p>
-        </div>
-      `;
-    }
-
-    function updateQrCodeFromInput() {
-      const val = document.getElementById("shareUrlInput").value;
-      renderAppQrCode(val);
-    }
-
-    function downloadMobileAppFile() {
-      try {
-        const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "옆집제니_5분영어수다_모바일앱.html";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1500);
-        showToast("📥", "모바일 앱 파일이 저장되었어요! 카톡으로 보내서 폰에서 바로 열어보세요.");
-      } catch (e) {
-        showToast("⚠️", "파일 저장 중 문제가 발생했어요. 초대 문구 복사를 이용해 주세요!");
-      }
-    }
-
-    async function triggerPwaInstall() {
-      if (!deferredPwaPrompt) {
-        showToast("📱", "아래 안내에 따라 브라우저 메뉴에서 [홈 화면에 추가]를 눌러주세요!");
-        return;
-      }
-      deferredPwaPrompt.prompt();
-      await deferredPwaPrompt.userChoice;
-      deferredPwaPrompt = null;
-      const banner = document.getElementById("pwaInstallBanner");
-      if (banner) banner.classList.add("hidden");
-    }
-
-    // ==================== SOUND EFFECTS & UTILITIES ====================
-    function playCelebrationChime() {
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx();
-        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
-        notes.forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.11);
-          gain.gain.setValueAtTime(0.12, ctx.currentTime + i * 0.11);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.11 + 0.35);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + i * 0.11);
-          osc.stop(ctx.currentTime + i * 0.11 + 0.35);
-        });
-      } catch (e) {}
-    }
-
-    let toastTimeout = null;
-    function showToast(icon, message) {
+    let toastTimer = null;
+    function showToast(icon, msg) {
       const box = document.getElementById("toastBox");
       document.getElementById("toastIcon").textContent = icon;
-      document.getElementById("toastMessage").textContent = message;
+      document.getElementById("toastMessage").textContent = msg;
       box.classList.remove("hidden");
       box.classList.add("flex");
-
-      if (toastTimeout) clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
         box.classList.add("hidden");
         box.classList.remove("flex");
-      }, 2800);
+      }, 2500);
     }
 
     function escapeHtml(str) {
       if (!str) return "";
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
     function escapeQuotes(str) {
       if (!str) return "";
-      return String(str)
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'")
-        .replace(/"/g, "&quot;");
+      return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
     }
   </script>
 </body>
 </html>
-
