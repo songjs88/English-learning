@@ -52,6 +52,8 @@
       color: #3D3028;
       font-family: 'Noto Sans KR', sans-serif;
       -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #F8F3EA; }
@@ -92,15 +94,15 @@
       50% { height: 18px; }
     }
 
-    .safe-bottom { padding-bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px)); }
-    .safe-top { padding-top: calc(0.65rem + env(safe-area-inset-top, 0px)); }
+    .safe-bottom { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+    .safe-top { padding-top: calc(0.5rem + env(safe-area-inset-top, 0px)); }
     button, input { touch-action: manipulation; }
   </style>
 </head>
-<body class="min-h-screen flex justify-center items-start md:items-center md:py-4 select-none">
+<body class="min-h-screen w-full flex justify-center items-center bg-[#EFE8DC] select-none p-0 md:p-4">
 
   <!-- Main App Container -->
-  <div class="w-full max-w-[540px] h-[100dvh] md:h-[94dvh] md:max-h-[920px] bg-cream-50 md:rounded-[32px] md:shadow-2xl md:border-4 md:border-white flex flex-col overflow-hidden relative">
+  <div class="w-full max-w-[540px] h-[100vh] sm:h-[92vh] sm:max-h-[880px] bg-cream-50 sm:rounded-[32px] sm:shadow-2xl sm:border-4 sm:border-white flex flex-col overflow-hidden relative">
 
     <!-- ==================== 1. TOP HEADER & CONTROL BAR ==================== -->
     <header class="bg-white/95 backdrop-blur-md border-b border-cream-200 px-3.5 safe-top pb-2.5 shrink-0 z-20 shadow-sm">
